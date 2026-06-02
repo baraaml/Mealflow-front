@@ -17,32 +17,47 @@ import kotlinx.serialization.json.Json
 object ApiClient {
     private lateinit var tokenManager: TokenManager
 
+    // Toggle for using fake backend data
+    const val USE_MOCK_BACKEND = true
+
     lateinit var authClient: HttpClient
 
     fun init(context: Context) {
         tokenManager = TokenManager(context)
-        authClient = HttpClient(CIO) {
+        
+        val engine = if (USE_MOCK_BACKEND) {
+            MockEngineFactory.create()
+        } else {
+            CIO.create()
+        }
+
+        authClient = HttpClient(engine) {
             install(ContentNegotiation) {
                 json(JsonProvider.json)
             }
-            installAuthInterceptor(tokenManager)
+            if (!USE_MOCK_BACKEND) {
+                installAuthInterceptor(tokenManager)
+            }
         }
     }
 
     // Base URL for all API endpoints
     const val BASE_URL = "https://mealflow.online/api/v3"
     const val InteractionsURL = "https://mealflow.online/api/v3"
+    
     // Shared HTTP client instance
-    val client = HttpClient(CIO) {
-        install(ContentNegotiation) {
-            json(JsonProvider.json)
+    val client: HttpClient by lazy {
+        val engine = if (USE_MOCK_BACKEND) {
+            MockEngineFactory.create()
+        } else {
+            CIO.create()
         }
 
-        // You can add additional client configurations here as needed:
-        // - Timeout settings
-        // - Logging
-        // - Error handling
-        // - Authentication interceptors
+        HttpClient(engine) {
+            install(ContentNegotiation) {
+                json(JsonProvider.json)
+            }
+        }
     }
 
     // API endpoint paths
