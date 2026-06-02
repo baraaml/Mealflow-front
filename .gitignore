@@ -1,0 +1,102 @@
+# General OS and IDE files
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Build directories
+/build/
+**/build/
+.gradle/
+.cxx/
+.externalNativeBuild/
+captures/
+
+# Android specific
+/local.properties
+**/local.properties
+**/gradle.properties
+**/*.keystore
+**/*.jks
+
+# Node.js/Backend
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Python/Recommend
+**/venv/
+**/.venv/
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/*.so
+**/.Python
+**/pip-log.txt
+**/pip-delete-this-directory.txt
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Debug files
+*.launch
+*.bin
+
+# System files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+
+# Gradle cache
+.gradle/
+!gradle-wrapper.jar
+
+# Kotlin
+.kotlin/
+
+# IntelliJ IDEA caches
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Backup files
+*.bak
+*.old
+*.orig
+*.rej
+
+# Custom files to ignore (from your list)
+**/chat.txt
+OldRecommend/
+Android/MealFlow/app/src/main/java/com/example/mealflow/ui/components/PostCommunity.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/ui/components/post/PostFeed.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/CommunityHome.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/utils/CommunitiesPagingSource.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/utils/FeedPagingSource.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/utils/formatTimeAgo.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/viewModel/FeedViewModel.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/viewModel/GetMyCommunitiesViewModel.kt
+Android/MealFlow/app/src/main/java/com/example/mealflow/network/ApiFeed.kt

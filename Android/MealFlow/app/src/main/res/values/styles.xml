@@ -1,0 +1,6 @@
+<resources>
+    <!-- Legacy Splash Screen Theme -->
+    <style name="Theme.MealFlow.Splash" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+</resources> 

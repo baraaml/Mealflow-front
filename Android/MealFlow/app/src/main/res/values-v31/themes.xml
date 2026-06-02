@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base splash screen theme -->
+    <style name="Theme.MealFlow.Splash" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/group_4</item>
+        <item name="postSplashScreenTheme">@style/Theme.MealFlow</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <!-- Force the theme to respect system dark/light mode -->
+        <item name="android:forceDarkAllowed">true</item>
+    </style>
+</resources> 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dark theme override for main theme -->
+    <style name="Theme.MealFlow" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/nice_green</item>
+        <item name="colorPrimaryVariant">@color/forest_green</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/pastel_green</item>
+        <item name="colorSecondaryVariant">@color/deep_olive</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Dark theme background colors -->
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:colorBackground">@color/black</item>
+
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Dark theme status bars -->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- Dark theme splash screen -->
+    <style name="Theme.MealFlow.Splash" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/group_4</item>
+        <item name="postSplashScreenTheme">@style/Theme.MealFlow</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:forceDarkAllowed">true</item>
+    </style>
+
+</resources>

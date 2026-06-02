@@ -1,0 +1,32 @@
+{
+  "directory": "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow",
+  "file_selections": {
+    "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow": {
+      "included": [
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/data/model/MealModelSearch.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/data/model/MealModels.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/data/repository/MealRepository.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/navigation/BottomNavigation.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/navigation/NavRoutes.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/network/ApiMeal.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/components/MealCard.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/components/MealSection.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/components/PlannerComponents.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/components/ShoppingListComponents.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchActiveFiltersUI.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchFilterCategoriesUI.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchFilterTypeContentsUI.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchFiltersPanelUI.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchLogic.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchPage.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchResultsUI.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/ui/screens/search/SearchTopBarUI.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/utils/MealSearchPagingSource.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/viewModel/MealPlannerViewModel.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/viewModel/MealPlannerViewModelFactory.kt",
+        "/home/baraa/work/Full-Working-App/the-meal-planning-application/Android/MealFlow/app/src/main/java/com/example/mealflow/viewModel/MealSearchViewModel.kt"
+      ],
+      "read_only": []
+    }
+  }
+}

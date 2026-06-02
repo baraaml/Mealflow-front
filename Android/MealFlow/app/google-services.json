@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "278656087482",
+    "project_id": "mealflow-462306",
+    "storage_bucket": "mealflow-462306.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278656087482:android:909a30db88a3b1fc9a1983",
+        "android_client_info": {
+          "package_name": "com.example.mealflow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "278656087482-57432k5s896ih5kfni1fim5t8cr8830j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mealflow",
+            "certificate_hash": "882784a76b70b9e920f4b4e26e2fd2b3a54fe9fd"
+          }
+        },
+        {
+          "client_id": "278656087482-diuffe03c3tve4hqfrpu9vvkquhq6ucq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVLbeq7Y3lSpThGCxtMBlAr8DWZwOeyyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278656087482-diuffe03c3tve4hqfrpu9vvkquhq6ucq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
