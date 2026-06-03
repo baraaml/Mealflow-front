@@ -1,4 +1,4 @@
-package com.example.mealflow.ui.screens.search // Or your new package
+package com.example.mealflow.ui.screens.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -53,14 +53,6 @@ fun SearchTopBarUI(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (onNavigateBack != null) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-            }
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,

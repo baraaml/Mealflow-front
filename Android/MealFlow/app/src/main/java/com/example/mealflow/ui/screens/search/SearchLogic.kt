@@ -1,7 +1,6 @@
-package com.example.mealflow.ui.screens // Or your new package
+package com.example.mealflow.ui.screens.search
 
 import com.example.mealflow.viewModel.MealSearchViewModel
-import com.example.mealflow.viewModel.MealViewModel // Keep for filter options if needed
 
 fun hasAnyFilters(
     selectedIngredients: List<String>,
@@ -22,7 +21,7 @@ fun hasAnyFilters(
 }
 
 fun executeSearch(
-    mealSearchViewModel: MealSearchViewModel, // Changed to MealSearchViewModel
+    mealSearchViewModel: MealSearchViewModel,
     searchType: String,
     searchQuery: String,
     selectedIngredients: List<String>,
@@ -42,13 +41,11 @@ fun executeSearch(
 
     val params = MealSearchViewModel.SearchParams(
         searchType = if (hasTextQuery && (searchType == "semantic" || searchType == "filters")) {
-            // If there's a text query, "semantic" or "filters" (acting like text search) are good.
-            // If user explicitly chose "ingredients" but also typed, backend logic for searchType="ingredients" with query_text applies.
             searchType
         } else if (activeFiltersPresent) {
-            "filters" // Default to "filters" if only filters are present
+            "filters"
         } else {
-            searchType // Use the selected searchType, could be "filters" for general browsing
+            searchType
         },
         queryText = if (searchQuery.isNotBlank()) searchQuery else null,
         ingredients = if (selectedIngredients.isNotEmpty()) selectedIngredients else null,
@@ -60,5 +57,5 @@ fun executeSearch(
         maxCalories = maxCalories,
         maxTime = maxPrepTime
     )
-    mealSearchViewModel.search(params)
+    mealSearchViewModel.onAction(MealSearchAction.OnSearchParamsChange(params))
 }

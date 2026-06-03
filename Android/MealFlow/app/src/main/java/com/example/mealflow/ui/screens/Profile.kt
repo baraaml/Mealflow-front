@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -111,6 +112,7 @@ import com.example.mealflow.ui.components.ModernDescriptionSectionProfile
 import com.example.mealflow.ui.components.ModernFollowersAndFollowingCount
 import com.example.mealflow.ui.components.PostUser1
 import com.example.mealflow.ui.components.PostUserInCommunity
+import com.example.mealflow.ui.screens.search.MealSearchAction
 import com.example.mealflow.viewModel.MealSearchViewModel
 import com.example.mealflow.viewModel.MyCommunitiesViewModel
 import com.example.mealflow.viewModel.PostDropdownViewModel
@@ -270,7 +272,7 @@ fun ProfilePage(
         withContext(Dispatchers.IO) {
             val userId = userPreferencesManager.getMyId()
             Log.d("t", "user id: $userId")
-            mealSearchViewModel.search(MealSearchViewModel.SearchParams(userId = userId))
+            mealSearchViewModel.onAction(MealSearchAction.OnSearchParamsChange(MealSearchViewModel.SearchParams(userId = userId)))
             fetchUserProfile()
         }
 //        val userId = userPreferencesManager.getMyId()

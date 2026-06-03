@@ -92,6 +92,7 @@ import com.example.mealflow.ui.components.ModernDescriptionSectionProfile
 import com.example.mealflow.ui.components.ModernFollowersAndFollowingCount
 import com.example.mealflow.ui.components.PostUser
 import com.example.mealflow.ui.components.PostUserInCommunity
+import com.example.mealflow.ui.screens.search.MealSearchAction
 import com.example.mealflow.viewModel.GetUserCommunitiesViewModel
 import com.example.mealflow.viewModel.MealSearchViewModel
 import com.example.mealflow.viewModel.UserPostViewModel
@@ -173,7 +174,7 @@ fun UserPage(
             val userId = userPreferencesManager.getUserId().first()
             Log.d("t","user id : $userId")
             // Initial search with default parameters
-            mealSearchViewModel.search(MealSearchViewModel.SearchParams(userId = userId))
+            mealSearchViewModel.onAction(MealSearchAction.OnSearchParamsChange(MealSearchViewModel.SearchParams(userId = userId)))
         }
     }
 

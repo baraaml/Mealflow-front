@@ -24,6 +24,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -122,7 +123,7 @@ import com.example.mealflow.ui.screens.RegisterPage
 import com.example.mealflow.ui.screens.RemoveMembersPage
 import com.example.mealflow.ui.screens.ReportBugPage
 import com.example.mealflow.ui.screens.ResetPasswordPage
-import com.example.mealflow.ui.screens.SearchPage
+import com.example.mealflow.ui.screens.search.SearchPage
 import com.example.mealflow.ui.screens.SearchResultsScreen
 import com.example.mealflow.ui.screens.SetAdminPage
 import com.example.mealflow.ui.screens.SettingsPage
@@ -424,6 +425,7 @@ class MainActivity : ComponentActivity() {
                 startDestination = startDestination,
                 modifier = Modifier
                     .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
                     .imePadding()
             ) {
                 composable(
@@ -842,7 +844,7 @@ class MainActivity : ComponentActivity() {
                                 navController.previousBackStackEntry?.savedStateHandle?.set("sourceScreenResult", sourceScreen)
                                 navController.popBackStack()
                             } else {
-                                navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(meal.mealId.toString()))
+                                navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(meal.mealId))
                             }
                         },
                         mealViewModel = mealViewModel,

@@ -1,4 +1,4 @@
-package com.example.mealflow.ui.screens // Or your new package
+package com.example.mealflow.ui.screens.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

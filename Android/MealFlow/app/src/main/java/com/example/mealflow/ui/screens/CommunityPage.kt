@@ -97,6 +97,7 @@ import com.example.mealflow.ui.components.ModernMembersAndRecipesCount
 import com.example.mealflow.ui.components.ModernRecipeCard
 import com.example.mealflow.ui.components.ModernTitleSection
 import com.example.mealflow.ui.components.PostUserInCommunity
+    import com.example.mealflow.ui.screens.search.MealSearchAction
 import com.example.mealflow.ui.components.RecipeItem
 import com.example.mealflow.viewModel.MealSearchViewModel
 import com.example.mealflow.viewModel.PostsCommunityViewModel
@@ -169,7 +170,7 @@ fun CommunityPage(
         val communityId = userPreferencesManager.getCommunityId().first()
         Log.d("community Id","community Id : $communityId")
         // Initial search with default parameters
-        mealSearchViewModel.search(MealSearchViewModel.SearchParams(communityId = communityId))
+        mealSearchViewModel.onAction(MealSearchAction.OnSearchParamsChange(MealSearchViewModel.SearchParams(communityId = communityId)))
     }
 
     // Calculate the pass ratio from 0 to 1
