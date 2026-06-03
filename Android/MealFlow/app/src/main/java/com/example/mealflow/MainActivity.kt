@@ -173,6 +173,8 @@ import com.example.mealflow.viewModel.UpdatePostViewModel
 import com.example.mealflow.viewModel.UserPostViewModel
 import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
@@ -295,16 +297,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    val apiMeal = ApiMeal()
-                    val mealRepository = MealRepository(apiMeal)
-                    val viewModel = viewModel<MealViewModel>(
-                        factory = MealViewModelFactory(
-                            LocalContext.current.applicationContext as Application,
-                            mealRepository
-                        )
-                    )
-
-                    val loginViewModel: LoginViewModel = viewModel()
+                    val viewModel: MealViewModel = koinViewModel()
+                    val loginViewModel: LoginViewModel = koinViewModel()
 
                     LaunchedEffect(Unit) {
                         Log.d("MainActivity", "Triggering initial meal fetch")
@@ -330,18 +324,18 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppNavHost(
         navController: NavHostController,
-        mealViewModel: MealViewModel,
+        mealViewModel: MealViewModel = koinViewModel(),
         userPreferencesManager: UserPreferencesManager
     ) {
-        val registerViewModel: RegisterViewModel = viewModel()
-        val createCommunityViewModel: CreateCommunityViewModel = viewModel()
-        val singleCommunityViewModel: SingleCommunityViewModel = viewModel()
-        val setupViewModel: SetupProfileViewModel = viewModel()
-        val getAllCommunitiesViewModel: GetAllCommunitiesViewModel = viewModel()
-        val myCommunitiesViewModel: MyCommunitiesViewModel = viewModel()
-        val communityMembers: CommunityMembersViewModel = viewModel()
-        val communitiesUserViewModel: GetUserCommunitiesViewModel = viewModel()
-        val postsUserViewModel: UserPostViewModel = viewModel()
+        val registerViewModel: RegisterViewModel = koinViewModel()
+        val createCommunityViewModel: CreateCommunityViewModel = koinViewModel()
+        val singleCommunityViewModel: SingleCommunityViewModel = koinViewModel()
+        val setupViewModel: SetupProfileViewModel = koinViewModel()
+        val getAllCommunitiesViewModel: GetAllCommunitiesViewModel = koinViewModel()
+        val myCommunitiesViewModel: MyCommunitiesViewModel = koinViewModel()
+        val communityMembers: CommunityMembersViewModel = koinViewModel()
+        val communitiesUserViewModel: GetUserCommunitiesViewModel = koinViewModel()
+        val postsUserViewModel: UserPostViewModel = koinViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
         val meals by mealViewModel.meals.collectAsState()
         val isLoading by mealViewModel.isLoading.collectAsState()
@@ -352,29 +346,19 @@ class MainActivity : ComponentActivity() {
         val shouldShowBottomBar = shouldShowBottomBar(currentRoute, navBackStackEntry)
         val communityid = userPreferencesManager.getCommunityId()
 
-        val postsViewModel: PostsViewModel = viewModel()
-        val myCommunitiesProfileViewModel: MyCommunitiesViewModel = viewModel()
-        val mealSearchViewModel: MealSearchViewModel = viewModel()
-        val postDropdownViewModel: PostDropdownViewModel = viewModel()
-        val updatePostViewModel: UpdatePostViewModel = viewModel()
-        val feedViewModel: FeedViewModel = viewModel()
+        val postsViewModel: PostsViewModel = koinViewModel()
+        val myCommunitiesProfileViewModel: MyCommunitiesViewModel = koinViewModel()
+        val mealSearchViewModel: MealSearchViewModel = koinViewModel()
+        val postDropdownViewModel: PostDropdownViewModel = koinViewModel()
+        val updatePostViewModel: UpdatePostViewModel = koinViewModel()
+        val feedViewModel: FeedViewModel = koinViewModel()
 
 
         val context = LocalContext.current
         val commentApiService = remember { CommentApiService(context) }
-        val application = context.applicationContext as Application
 
-        val shoppingListViewModel: ShoppingListViewModel = viewModel(
-            factory = ShoppingListViewModelFactory(context.applicationContext)
-        )
-
-        val mealPlannerViewModel: MealPlannerViewModel = viewModel(
-            factory = MealPlannerViewModelFactory(
-                context.applicationContext,
-                shoppingListViewModel,
-                mealViewModel
-            )
-        )
+        val shoppingListViewModel: ShoppingListViewModel = koinViewModel()
+        val mealPlannerViewModel: MealPlannerViewModel = koinViewModel()
 
         val tokenManager = TokenManager(context)
 
@@ -991,12 +975,8 @@ class MainActivity : ComponentActivity() {
                     val mealId = backStackEntry.arguments?.getString("mealId") ?: ""
                     // Try to get the meal from the ViewModel's cache first
                     val cachedMeal = mealViewModel.findMealById(mealId)
-                    val mealDetailsViewModel: MealDetailsViewModel = viewModel(
-                        factory = MealDetailsViewModelFactory(
-                            mealRepository = MealRepository(ApiMeal()),
-                            mealId = mealId,
-                            initialMeal = cachedMeal // Pass the cached meal if available
-                        )
+                    val mealDetailsViewModel: MealDetailsViewModel = koinViewModel(
+                        parameters = { parametersOf(mealId, cachedMeal) }
                     )
                     val mealDetailsState by mealDetailsViewModel.mealDetails.collectAsState()
                     val isPlanned = mealPlannerViewModel.allPlannedMealsData.value.plannedMeals.any { it.meal.mealId == mealId }
