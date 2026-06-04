@@ -6,7 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.mealflow.database.UserPreferencesManager
+import com.example.mealflow.core.data.network.ApiClient
 import com.example.mealflow.database.token.TokenManager
+
+import com.example.mealflow.feature.auth.data.dto.AuthDataDto
 import com.example.mealflow.navigation.Destination
 import com.example.mealflow.utils.googleSignIn.getGoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +33,7 @@ data class LogoutRequest(val refreshToken: String)
 
 // ----------------------- LogoutResponse ---------------------------
 @Serializable
-data class LogoutResponse(val success: Boolean, val message: String,val data: Data? = null)
+data class LogoutResponse(val success: Boolean, val message: String, val data: AuthDataDto? = null)
 
 
 fun logoutApi(

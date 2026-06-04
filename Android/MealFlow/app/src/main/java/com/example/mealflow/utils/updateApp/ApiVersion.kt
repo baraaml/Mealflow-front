@@ -2,7 +2,7 @@ package com.example.mealflow.utils.updateApp
 
 import android.content.Context
 import android.util.Log
-import com.example.mealflow.network.ApiClient
+import com.example.mealflow.core.data.network.ApiClient
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess

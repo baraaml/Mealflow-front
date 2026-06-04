@@ -1,6 +1,8 @@
 package com.example.mealflow.network
 
+import com.example.mealflow.core.data.network.ApiClient
 import io.ktor.client.request.get
+
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue

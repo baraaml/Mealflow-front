@@ -36,57 +36,15 @@ import com.example.mealflow.data.model.Meal
 import com.example.mealflow.data.model.MealType
 import com.example.mealflow.database.UserPreferencesManager
 import com.example.mealflow.database.token.TokenManager
+import com.example.mealflow.feature.auth.presentation.authGraph
 import com.example.mealflow.network.CommentApiService
-import com.example.mealflow.network.Resource
+import com.example.mealflow.core.domain.util.Resource
 import com.example.mealflow.ui.components.post.PostDetailsScreen
-import com.example.mealflow.ui.screens.AddCustomItemScreen
-import com.example.mealflow.ui.screens.AllCommunitiesScreen
-import com.example.mealflow.ui.screens.AllMealsPage
-import com.example.mealflow.ui.screens.CheckEmailPage
-import com.example.mealflow.ui.screens.CommunityHome
-import com.example.mealflow.ui.screens.CommunityPage
-import com.example.mealflow.ui.screens.CookingModeScreen
-import com.example.mealflow.ui.screens.FollowersPage
-import com.example.mealflow.ui.screens.FollowingPage
-import com.example.mealflow.ui.screens.ForgetPasswordPage
-import com.example.mealflow.ui.screens.HealthDataScreen
-import com.example.mealflow.ui.screens.HelpCenterPage
-import com.example.mealflow.ui.screens.HomePage
-import com.example.mealflow.ui.screens.LoginPage
-import com.example.mealflow.ui.screens.MealDetailScreen
-import com.example.mealflow.ui.screens.MembersPage
-import com.example.mealflow.ui.screens.MultiQuestionScreen
-import com.example.mealflow.ui.screens.MyCommunitiesScreen
-import com.example.mealflow.ui.screens.OtpPage
-import com.example.mealflow.ui.screens.PostCreationPage
-import com.example.mealflow.ui.screens.PrivacyPolicyPage
-import com.example.mealflow.ui.screens.ProfilePage
-import com.example.mealflow.ui.screens.Question
-import com.example.mealflow.ui.screens.QuickLoginPage
-import com.example.mealflow.ui.screens.RecipeCreationPage
-import com.example.mealflow.ui.screens.RegisterPage
-import com.example.mealflow.ui.screens.RemoveMembersPage
-import com.example.mealflow.ui.screens.ReportBugPage
-import com.example.mealflow.ui.screens.ResetPasswordPage
-import com.example.mealflow.ui.screens.SearchResultsScreen
-import com.example.mealflow.ui.screens.SetAdminPage
-import com.example.mealflow.ui.screens.SettingsPage
-import com.example.mealflow.ui.screens.StartPage
-import com.example.mealflow.ui.screens.TermsOfServicePage
-import com.example.mealflow.ui.screens.UpdateCommunityPage
-import com.example.mealflow.ui.screens.UpdateProfileScreen
-import com.example.mealflow.ui.screens.UserFollowersPage
-import com.example.mealflow.ui.screens.UserFollowingPage
-import com.example.mealflow.ui.screens.UserPage
+import com.example.mealflow.ui.screens.*
 import com.example.mealflow.ui.screens.createCommunity.FirstStep
 import com.example.mealflow.ui.screens.createCommunity.SecondStep
 import com.example.mealflow.ui.screens.createCommunity.ThirdStep
-import com.example.mealflow.ui.screens.planner.AllPlansScreen
-import com.example.mealflow.ui.screens.planner.DaysSelectionScreen
-import com.example.mealflow.ui.screens.planner.PlanConfigScreen
-import com.example.mealflow.ui.screens.planner.PlannerPage
-import com.example.mealflow.ui.screens.planner.ShoppingFrequencyScreen
-import com.example.mealflow.ui.screens.planner.ShoppingListScreen
+import com.example.mealflow.ui.screens.planner.*
 import com.example.mealflow.ui.screens.search.SearchPage
 import com.example.mealflow.ui.screens.setup.SetupBasicInfoScreen
 import com.example.mealflow.ui.screens.setup.SetupPhotosScreen
@@ -97,22 +55,7 @@ import com.example.mealflow.utils.DateUtils
 import com.example.mealflow.utils.ObservePlannerResult
 import com.example.mealflow.utils.calculateShoppingDays
 import com.example.mealflow.utils.rememberHapticFeedback
-import com.example.mealflow.viewModel.CommunityMembersViewModel
-import com.example.mealflow.viewModel.CreateCommunityViewModel
-import com.example.mealflow.viewModel.FeedViewModel
-import com.example.mealflow.viewModel.GetUserCommunitiesViewModel
-import com.example.mealflow.viewModel.MealDetailsViewModel
-import com.example.mealflow.viewModel.MealPlannerViewModel
-import com.example.mealflow.viewModel.MealSearchViewModel
-import com.example.mealflow.viewModel.MealViewModel
-import com.example.mealflow.viewModel.MyCommunitiesViewModel
-import com.example.mealflow.viewModel.PostDropdownViewModel
-import com.example.mealflow.viewModel.PostsViewModel
-import com.example.mealflow.viewModel.RegisterViewModel
-import com.example.mealflow.viewModel.ShoppingListViewModel
-import com.example.mealflow.viewModel.SingleCommunityViewModel
-import com.example.mealflow.viewModel.UpdatePostViewModel
-import com.example.mealflow.viewModel.UserPostViewModel
+import com.example.mealflow.viewModel.*
 import com.google.gson.Gson
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -131,7 +74,6 @@ fun AppNavHost(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    val registerViewModel: RegisterViewModel = koinViewModel()
     val createCommunityViewModel: CreateCommunityViewModel = koinViewModel()
     val singleCommunityViewModel: SingleCommunityViewModel = koinViewModel()
     val setupViewModel: SetupProfileViewModel = koinViewModel()
@@ -169,48 +111,47 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable<Destination.Start>(
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { StartPage(navController) }
-
-        composable<Destination.Login>(
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { LoginPage(navController) }
-
-        composable<Destination.Register>(
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { RegisterPage(navController, registerViewModel) }
-
-        composable<Destination.Otp>(
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { backStackEntry ->
-            val otp: Destination.Otp = backStackEntry.toRoute()
-            OtpPage(navController = navController, registerViewModel = registerViewModel, email = otp.email)
-        }
-
-        composable<Destination.ForgetPassword>(
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { ForgetPasswordPage(navController) }
-
-        composable<Destination.CheckEmail> { backStackEntry ->
-            val checkEmail: Destination.CheckEmail = backStackEntry.toRoute()
-            CheckEmailPage(navController = navController, email = checkEmail.email)
-        }
+        authGraph(
+            navController = navController,
+            onLoginSuccess = {
+                navController.navigate(Destination.Home) {
+                    popUpTo(Destination.Start) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
+            onRegisterSuccess = { email ->
+                navController.navigate(Destination.Otp(email)) {
+                    popUpTo(Destination.Register) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
+            onOtpSuccess = {
+                navController.navigate(Destination.Home) {
+                    popUpTo(Destination.Start) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
+            onForgetPasswordClick = {
+                navController.navigate(Destination.ForgetPassword)
+            },
+            onNavigateToLogin = {
+                navController.navigate(Destination.Login)
+            },
+            onNavigateToRegister = {
+                navController.navigate(Destination.Register)
+            },
+            onForgetPasswordSuccess = { email ->
+                navController.navigate(Destination.CheckEmail(email))
+            },
+            onBack = {
+                navController.popBackStack()
+            },
+            onResetPasswordSuccess = {
+                navController.navigate(Destination.Login) {
+                    popUpTo(Destination.Login) { inclusive = true }
+                }
+            }
+        )
 
         composable<Destination.Profile>(
             enterTransition = { NavigationAnimations.enterTransition(this) },
@@ -251,23 +192,6 @@ fun AppNavHost(
             popExitTransition = { NavigationAnimations.popExitTransition(this) }
         ) { UserPage(communitiesViewModel = communitiesUserViewModel, mealSearchViewModel = mealSearchViewModel, postsViewModel = postsUserViewModel, commentApiService = commentApiService, userPreferencesManager = userPreferencesManager, navController = navController) }
 
-        composable<Destination.QuickLogin>(
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { QuickLoginPage(context, navController) }
-
-        composable<Destination.ResetPassword>(
-            deepLinks = listOf(navDeepLink { uriPattern = "https://iiacbca.r.bh.d.sendibt3.com/tr/cl?token={token}" }),
-            enterTransition = { NavigationAnimations.enterTransition(this) },
-            exitTransition = { NavigationAnimations.exitTransition(this) },
-            popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-            popExitTransition = { NavigationAnimations.popExitTransition(this) }
-        ) { backStackEntry ->
-            val reset: Destination.ResetPassword = backStackEntry.toRoute()
-            ResetPasswordPage(navController, reset.token)
-        }
 
         composable<Destination.CommunityHome>(
             enterTransition = { NavigationAnimations.enterTransition(this) },

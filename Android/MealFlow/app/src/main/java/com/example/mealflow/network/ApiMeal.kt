@@ -11,7 +11,9 @@ import com.example.mealflow.data.model.RegionsResponse
 import com.example.mealflow.data.model.SearchIngredient
 import com.example.mealflow.data.model.SubRegion
 import com.example.mealflow.data.model.SubRegionsResponse
-import com.example.mealflow.network.ApiClient.Endpoints.METADATA
+import com.example.mealflow.core.data.network.ApiClient
+import com.example.mealflow.core.data.network.ApiClient.Endpoints.METADATA
+
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.headers

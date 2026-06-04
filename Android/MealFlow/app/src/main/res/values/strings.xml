@@ -46,4 +46,11 @@
     <string name="BackToLogin">Back to Login</string>
     <string name="ResendEmail">Resend Email</string>
 
+    <string name="error_unknown">An unknown error occurred</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_server">Server error, please try again later</string>
+    <string name="error_serialization">Data processing error</string>
+    <string name="error_unauthorized">Invalid credentials</string>
+    <string name="error_conflict">Resource already exists</string>
+    <string name="error_too_many_requests">Too many requests, please slow down</string>
 </resources>

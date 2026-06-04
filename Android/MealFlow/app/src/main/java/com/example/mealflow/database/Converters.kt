@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.example.mealflow.network.Category
 import com.example.mealflow.network.Member
 import com.example.mealflow.network.OwnerCommunity
-import com.example.mealflow.network.User
+import com.example.mealflow.core.data.network.dto.UserDto
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -44,13 +44,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromUser(user: User): String {
+    fun fromUser(user: UserDto): String {
         return Gson().toJson(user)
     }
 
     @TypeConverter
-    fun toUser(userJson: String): User {
-        return Gson().fromJson(userJson, User::class.java)
+    fun toUser(userJson: String): UserDto {
+        return Gson().fromJson(userJson, UserDto::class.java)
     }
 
 }

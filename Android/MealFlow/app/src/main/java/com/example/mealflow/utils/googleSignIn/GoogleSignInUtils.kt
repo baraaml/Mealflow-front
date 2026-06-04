@@ -9,7 +9,7 @@ import com.example.mealflow.R
 import com.example.mealflow.database.UserPreferencesManager
 import com.example.mealflow.navigation.Destination
 import com.example.mealflow.database.token.TokenManager
-import com.example.mealflow.network.ApiClient
+import com.example.mealflow.core.data.network.ApiClient
 import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth

@@ -94,6 +94,14 @@ fun BottomNavigationBar(
                 selected = selected,
                 onClick = {
                     try {
+                        val currentDestination = navController.currentDestination
+                        val isAlreadyOnDestination = currentDestination?.hasRoute(item.route::class) == true
+                        
+                        if (isAlreadyOnDestination) {
+                            Log.d("Navigation", "Already on ${item.route}, skipping navigation to avoid reload")
+                            return@NavigationBarItem
+                        }
+
                         onItemSelected(index)
                         Log.d("Navigation", "Navigating to ${item.route}")
                         

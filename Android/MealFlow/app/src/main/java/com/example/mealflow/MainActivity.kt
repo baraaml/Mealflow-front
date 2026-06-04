@@ -27,7 +27,9 @@ import com.example.mealflow.database.UserPreferencesManager
 import com.example.mealflow.ui.MainScreen
 import com.example.mealflow.ui.components.AppState
 import com.example.mealflow.ui.theme.MealFlowTheme
-import com.example.mealflow.viewModel.LoginViewModel
+import com.example.mealflow.feature.auth.presentation.login.LoginViewModel
+import com.example.mealflow.feature.auth.presentation.login.LoginEvent
+import com.example.mealflow.core.presentation.util.ObserveAsEvents
 import com.example.mealflow.viewModel.MealViewModel
 import com.google.firebase.FirebaseApp
 import org.koin.androidx.compose.koinViewModel
@@ -97,10 +99,9 @@ class MainActivity : ComponentActivity() {
                 MealFlowTheme(darkTheme = useDarkTheme) {
                     val viewModel: MealViewModel = koinViewModel()
                     val loginViewModel: LoginViewModel = koinViewModel()
-                    val loginSuccessful by loginViewModel.loginSuccessful.observeAsState(false)
 
-                    LaunchedEffect(loginSuccessful) {
-                        if (loginSuccessful) {
+                    ObserveAsEvents(loginViewModel.events) { event ->
+                        if (event is LoginEvent.LoginSuccess) {
                             Log.d("MainActivity", "Login successful, refreshing meals")
                             viewModel.refreshMeals()
                         }

@@ -3,7 +3,7 @@ package com.example.mealflow.viewModel
 import androidx.lifecycle.ViewModel
 import com.example.mealflow.data.model.Meal
 import com.example.mealflow.data.repository.MealRepository
-import com.example.mealflow.network.Resource
+import com.example.mealflow.core.domain.util.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope

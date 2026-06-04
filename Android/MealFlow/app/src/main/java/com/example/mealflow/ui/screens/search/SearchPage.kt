@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.mealflow.data.model.Meal
-import com.example.mealflow.ui.utils.ObserveAsEvents
+import com.example.mealflow.core.presentation.util.ObserveAsEvents
 import com.example.mealflow.viewModel.MealSearchViewModel
 import com.example.mealflow.viewModel.MealViewModel
 import kotlinx.coroutines.FlowPreview
