@@ -138,37 +138,7 @@ private fun handleLeaveCommunityScenario(response: LeaveCommunityResponse, conte
  * @param onConfirm Callback when user confirms leaving
  * @param onCancel Callback when user cancels
  */
-fun leaveCommunityWithConfirmation(
-    idCommunity: String,
-    context: Context,
-    onConfirm: () -> Unit = {},
-    onCancel: () -> Unit = {}
-) {
-    // Note: You'll need to implement the actual dialog in your UI layer
-    // This is just a placeholder for the confirmation logic
-
-    // Example of how you might use it:
-    // showConfirmationDialog(
-    //     context = context,
-    //     title = "Leave Community",
-    //     message = "Are you sure you want to leave this community?",
-    //     onConfirm = {
-    //         onConfirm()
-    //         leaveCommunityApi(
-    //             idCommunity = idCommunity,
-    //             context = context,
-    //             onSuccess = { response ->
-    //                 // Handle success - maybe navigate back
-    //             },
-    //             onError = { error ->
-    //                 // Handle error
-    //             }
-    //         )
-    //     },
-    //     onCancel = onCancel
-    // )
-}
-
+// later
 /**
  * Extension function to check if the leave operation resulted in community deletion
  */

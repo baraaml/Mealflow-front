@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.mealflow.database.token.TokenManager
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.utils.JsonProvider
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -194,36 +195,18 @@ fun createRecipeApi(
             withContext(Dispatchers.Main) {
                 if (apiResponse?.success == true) {
                     Toast.makeText(context, "Recipe created successfully!", Toast.LENGTH_LONG).show()
-                    if(communityId == null)
-                    {
-                        navController.navigate("Profile Page") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                    else {
-                        navController.navigate("Community Page") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
+                    val destination = if (communityId == null) Destination.Profile else Destination.CommunityPage
+                    navController.navigate(destination) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
                         }
                     }
                 } else {
                     Toast.makeText(context, "Recipe created successfully!", Toast.LENGTH_LONG).show()
-                    if(communityId == null)
-                    {
-                        navController.navigate("Profile Page") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                    else {
-                        navController.navigate("Community Page") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
+                    val destination = if (communityId == null) Destination.Profile else Destination.CommunityPage
+                    navController.navigate(destination) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
                         }
                     }
                 }

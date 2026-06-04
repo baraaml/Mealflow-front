@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.mealflow.R
@@ -153,7 +154,7 @@ fun ModernTopBar(navController: NavController) {
                     profileImageUrl = profileImageUrl,
                     size = 45.dp,
                     cornerRadius = 12.dp,
-                    onClick = { navController.navigate("Profile Page") }
+                    onClick = { navController.navigate(Destination.Profile) }
                 )
 
                 Spacer(modifier = Modifier.width(14.dp))
@@ -183,40 +184,11 @@ fun ModernTopBar(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                // Notification button with badge indicator
-//                Box(contentAlignment = Alignment.TopEnd) {
-//                    IconButton(
-//                        onClick = { navController.navigate("search_results") },
-//                        modifier = Modifier
-//                            .size(38.dp)
-//                            .clip(RoundedCornerShape(10.dp))
-//                            .background(
-//                                MaterialTheme.colorScheme.surfaceVariant
-//                                    .copy(alpha = 0.4f)
-//                            )
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Rounded.Notifications,
-//                            contentDescription = "Notifications",
-//                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-//                            modifier = Modifier.size(20.dp)
-//                        )
-//                    }
-//
-//                    // Notification badge
-//                    Box(
-//                        modifier = Modifier
-//                            .size(10.dp)
-//                            .clip(CircleShape)
-//                            .background(MaterialTheme.colorScheme.error)
-//                            .offset(x = (-2).dp, y = 2.dp)
-//                    )
-//                }
 
                 // Search button with badge indicator
                 Box(contentAlignment = Alignment.TopEnd) {
                     IconButton(
-                        onClick = { navController.navigate("search_results") },
+                        onClick = { navController.navigate(Destination.SearchResults) },
                         modifier = Modifier
                             .size(38.dp)
                             .clip(RoundedCornerShape(10.dp))
@@ -279,7 +251,7 @@ fun ModernTopBar(navController: NavController) {
                         title = "All Communities",
                         onClick = {
                             showBottomSheet = false
-                            navController.navigate("AllCommunities Page")
+                            navController.navigate(Destination.AllCommunities)
                         }
                     )
 
@@ -293,7 +265,7 @@ fun ModernTopBar(navController: NavController) {
                         title = "Update Profile",
                         onClick = {
                             showBottomSheet = false
-                            navController.navigate("Update Profile")
+                            navController.navigate(Destination.UpdateProfile)
                         }
                     )
 

@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import com.example.mealflow.navigation.Destination
 
 // ----------------------- ForgetPasswordRequest ---------------------------
 @Serializable
@@ -59,7 +60,7 @@ fun forgetPasswordApi(
                 withContext(Dispatchers.Main) { // ✅ Update UI within the Main Thread
                     if (responseBody.success) {
                         Log.d("API", "✅ Successful login, go to the next page")
-                        navController.navigate("check_email/$email")
+                        navController.navigate(Destination.CheckEmail(email))
                     } else {
                         Log.e("API", "❌ Login failed:${responseBody.message}")
                     }

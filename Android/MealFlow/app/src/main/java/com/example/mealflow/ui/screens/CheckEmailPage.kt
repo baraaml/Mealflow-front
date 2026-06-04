@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import com.example.mealflow.R
 
@@ -108,8 +109,8 @@ fun CheckEmailPage(
             Button(
                 onClick = {
                     // العودة إلى شاشة تسجيل الدخول
-                    navController.navigate("login") {
-                        popUpTo("login") { inclusive = true }
+                    navController.navigate(Destination.Login) {
+                        popUpTo(Destination.Login) { inclusive = true }
                     }
                 },
                 modifier = Modifier

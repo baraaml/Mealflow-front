@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mealflow.data.model.Meal
-import com.example.mealflow.navigation.NavRoutes
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.network.InteractionRequest
 import com.example.mealflow.ui.components.EmptyStateGenericHomePage
 import com.example.mealflow.ui.components.EmptyStatePlannedMeals
@@ -162,7 +162,7 @@ fun HomePage(
                 // Section 1: Locally Planned Meals for Today
                 SectionHeader(
                     title = "Today's Plan",
-                    onViewAll = { navController.navigate(NavRoutes.PlannerPage.route) },
+                    onViewAll = { navController.navigate(Destination.Planner) },
                     showViewAll = true
                 )
                 if (locallyPlannedMealsForToday.isNotEmpty()) {
@@ -187,7 +187,7 @@ fun HomePage(
                     EmptyStatePlannedMeals(
                         message = "No plans for today!",
                         buttonText = "Plan Some Meals",
-                        onButtonClick = { navController.navigate(NavRoutes.PlannerPage.route) }
+                        onButtonClick = { navController.navigate(Destination.Planner) }
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -195,7 +195,7 @@ fun HomePage(
                 // Section 2: Trending Meals (from backend)
                 SectionHeader(
                     title = "Trending",
-                    onViewAll = { navController.navigate(NavRoutes.AllMealsPage.createAllMealsRoute("Trending")) },
+                    onViewAll = { navController.navigate(Destination.AllMeals("Trending")) },
                     showViewAll = true
                 )
 
@@ -219,7 +219,7 @@ fun HomePage(
                 // Section 3: Recommendations (from backend)
                 SectionHeader(
                     title = "Recommended",
-                    onViewAll = { navController.navigate(NavRoutes.AllMealsPage.createAllMealsRoute("Recommended")) },
+                    onViewAll = { navController.navigate(Destination.AllMeals("Recommended")) },
                     showViewAll = true
                 )
 

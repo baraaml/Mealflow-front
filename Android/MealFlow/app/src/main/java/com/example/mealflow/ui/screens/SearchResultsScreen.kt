@@ -74,6 +74,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -625,7 +626,7 @@ fun CommunitiesSearchResults(
                         CoroutineScope(Dispatchers.IO).launch {
                             userPreferencesManager.saveCommunityId(community.id)
                         }
-                        navController.navigate("Community Page")
+                        navController.navigate(Destination.CommunityPage)
                     }
                 )
             }
@@ -886,9 +887,9 @@ fun UserSearchItem(
                                 UserPreferencesManager(context).saveUserId(postUserId.toString())
                             }
                             if (isMyPost == true) {
-                                navController.navigate("Profile Page")
+                                navController.navigate(Destination.Profile)
                             } else {
-                                navController.navigate("User Page")
+                                navController.navigate(Destination.User)
                             }
                         }
                     }

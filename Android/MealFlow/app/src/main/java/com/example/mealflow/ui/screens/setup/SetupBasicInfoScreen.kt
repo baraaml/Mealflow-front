@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -224,7 +225,7 @@ fun SetupBasicInfoScreen(
             Button(
                 onClick = {
                     viewModel.basicInfoSetup(context, navController)
-                    navController.navigate("setup_physical_info")
+                    navController.navigate(Destination.SetupPhysicalInfo)
                           },
                 modifier = Modifier
                     .fillMaxWidth()

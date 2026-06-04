@@ -47,7 +47,7 @@ import com.example.mealflow.ui.components.AddToPlanDialog
 import com.example.mealflow.ui.components.MealPlanCard
 import com.example.mealflow.ui.components.MealimePlanCard
 import com.example.mealflow.ui.components.PulsatingEffect
-import com.example.mealflow.navigation.NavRoutes
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.ui.animations.EnhancedAnimations.EnhancedPulsatingEffect
 import com.example.mealflow.utils.DateUtils
 import com.example.mealflow.viewModel.MealPlannerViewModel
@@ -279,7 +279,7 @@ fun PlannerPage(
                         onClick = {
                             if (currentDayMeals.isEmpty()) {
                                 // Navigate to DaysSelectionScreen with the current date the user is viewing
-                                navController.navigate(NavRoutes.DaysSelectionScreen.route)
+                                navController.navigate(Destination.DaysSelection)
                             } else {
                                 onPlanMealsClick()
                             }
@@ -651,7 +651,7 @@ fun EmptyStateContentPlanMeals(
                 Button(
                     onClick = {
                         // Navigate to DaysSelectionScreen when no meals are planned
-                        navController.navigate(NavRoutes.DaysSelectionScreen.route)
+                        navController.navigate(Destination.DaysSelection)
                     },
                     modifier = Modifier.fillMaxWidth(0.7f)
                 ) {

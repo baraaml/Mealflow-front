@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.mealflow.data.model.SingleCommunity
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.database.token.TokenManager
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -147,7 +148,7 @@ fun updateCommunityApi(
                 when {
                     apiResponse != null && apiResponse.success && apiResponse.community != null -> {
                         Toast.makeText(context, "Community updated successfully!", Toast.LENGTH_LONG).show()
-                        navController.navigate("Community Page")
+                        navController.navigate(Destination.CommunityPage)
                         onSuccess?.invoke(apiResponse.community)
                     }
                     apiResponse != null && !apiResponse.success -> {

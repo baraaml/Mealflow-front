@@ -12,7 +12,6 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.mealflow.MainActivity
 import com.example.mealflow.R
-import com.example.mealflow.navigation.NavRoutes
 import com.example.mealflow.utils.DateUtils
 import com.example.mealflow.utils.ShoppingReminderManager
 import java.time.LocalDate
@@ -74,7 +73,7 @@ class ShoppingReminderReceiver : BroadcastReceiver() {
             action = Intent.ACTION_MAIN
             addCategory(Intent.CATEGORY_LAUNCHER)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra("NAVIGATE_TO", NavRoutes.ShoppingListPage.route)
+            putExtra("NAVIGATE_TO", "Shopping List Page")
             putExtra("SHOPPING_DAY_INDEX", shoppingDayIndex)
         }
         

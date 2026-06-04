@@ -54,10 +54,3 @@ fun updateLocale(resources: Resources, languageCode: String) {
     config.setLocale(locale)
     resources.updateConfiguration(config, resources.displayMetrics)
 }
-
-@Preview
-@Composable
-fun View()
-{
-    LanguageSwitcher()
-}

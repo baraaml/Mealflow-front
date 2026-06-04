@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import com.example.mealflow.R
 import com.example.mealflow.database.token.TokenManager
@@ -70,7 +71,7 @@ fun QuickLoginPage(
         Button(
             onClick = {
                 quickLoginApi(refreshToken.toString(),context,navController)
-                navController.navigate("Home Page")
+                navController.navigate(Destination.Home)
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
             modifier = Modifier
@@ -83,7 +84,7 @@ fun QuickLoginPage(
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedButton(
             onClick = {
-                navController.navigate("Start Page")
+                navController.navigate(Destination.Start)
             },
             modifier = Modifier
                 .fillMaxWidth()

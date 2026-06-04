@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -518,7 +519,7 @@ fun CommunityPage(
                                         dietaryTags = meal.dietaryTags as List<String>,
                                         rating = meal.rating.toFloat() ,
                                         onClick = {
-                                            navController.navigate("meal_detail/${meal.mealId}")
+                                            navController.navigate(Destination.MealDetail(meal.mealId))
                                         },
                                         onSaveClick = {
 //                                            saveMealApi(
@@ -644,7 +645,7 @@ fun CommunityPage(
                         title = "Set Admin",
                         onClick = {
                             showBottomSheet = false
-                            navController.navigate("SetAdmin Page")
+                            navController.navigate(Destination.SetAdmin)
                         }
                     )
 
@@ -658,7 +659,7 @@ fun CommunityPage(
                         title = "Remove Member",
                         onClick = {
                             showBottomSheet = false
-                            navController.navigate("remove_members")
+                            navController.navigate(Destination.RemoveMembers)
                         }
                     )
 
@@ -672,7 +673,7 @@ fun CommunityPage(
                         title = "Update Community",
                         onClick = {
                             showBottomSheet = false
-                            navController.navigate("Update Community")
+                            navController.navigate(Destination.UpdateCommunity)
                         }
                     )
 
@@ -712,7 +713,7 @@ fun CommunityPage(
                         title = "Create Post",
                         onClick = {
                             isSheetOpen = false
-                            navController.navigate("PostCreationPage?communityId=${communityId}")
+                            navController.navigate(Destination.PostCreation(communityId = communityId))
                         }
                     )
 
@@ -726,7 +727,7 @@ fun CommunityPage(
                         title = "Create Recipe",
                         onClick = {
                             isSheetOpen = false
-                            navController.navigate("RecipeCreationPage?communityId=${communityId}")
+                            navController.navigate(Destination.RecipeCreation(communityId = communityId))
                         }
                     )
                 }
@@ -740,7 +741,7 @@ fun CommunityPage(
                 onConfirm = {
                     val result = deleteCommunity(context)
                     if (result?.success == true) {
-                        navController.navigate("Community Home")
+                        navController.navigate(Destination.CommunityHome)
                     }
                 }
             )

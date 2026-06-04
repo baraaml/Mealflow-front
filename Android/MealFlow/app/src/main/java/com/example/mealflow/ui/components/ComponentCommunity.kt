@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import coil.compose.rememberAsyncImagePainter
 import com.example.mealflow.R
 import com.example.mealflow.database.UserPreferencesManager
@@ -361,7 +362,7 @@ fun CommunityList(
                 text = "See all",
                 fontSize = 14.sp,
                 modifier = Modifier.clickable {
-                    navController.navigate("MyCommunities Page")
+                    navController.navigate(Destination.MyCommunities)
                 }
             )
         }
@@ -415,7 +416,7 @@ fun CommunityList(
                                 CoroutineScope(Dispatchers.IO).launch {
                                     userPreferencesManager.saveCommunityId(community.id)
                                 }
-                                navController.navigate("Community Page")
+                                navController.navigate(Destination.CommunityPage)
                             },
                             isMember = community.isMember
                         )

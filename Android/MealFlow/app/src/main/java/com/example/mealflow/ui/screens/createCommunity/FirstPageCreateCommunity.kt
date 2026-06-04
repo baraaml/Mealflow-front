@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import com.example.mealflow.R
 import com.example.mealflow.ui.components.TopBarCreateCommunity
@@ -50,7 +51,7 @@ fun FirstStep(navController: NavController, viewModel: CreateCommunityViewModel 
             TopBarCreateCommunity(
                 navController = navController,
                 textNumber = "1 of 3",
-                onClick = { if (isButtonEnabled) navController.navigate("SecondStep Page") },
+                onClick = { if (isButtonEnabled) navController.navigate(Destination.SecondStep) },
                 isButtonEnabled = isButtonEnabled
             )
         },

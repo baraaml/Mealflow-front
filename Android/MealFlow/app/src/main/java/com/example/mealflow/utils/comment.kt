@@ -73,6 +73,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mealflow.R
@@ -456,9 +457,9 @@ fun CommentItem(
                             coroutineScope.launch {
                                 UserPreferencesManager(context).saveUserId(postUserId.toString())
                                 if (isMyPost == true) {
-                                    navController.navigate("Profile Page")
+                                    navController.navigate(Destination.Profile)
                                 } else {
-                                    navController.navigate("User Page")
+                                    navController.navigate(Destination.User)
                                 }
                             }
                         }

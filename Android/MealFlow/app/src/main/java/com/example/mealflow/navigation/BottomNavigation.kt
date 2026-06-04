@@ -40,7 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.toRoute
 import com.example.mealflow.BottomNavigationItem
 
 @Composable
@@ -83,13 +86,8 @@ fun BottomNavigationBar(
                     try {
                         onItemSelected(index)
                         Log.d("Navigation", "Navigating to ${item.route}")
-                        // For search page, ensure no arguments are passed when navigating from bottom bar
-                        val routeToNavigate = if (item.route == NavRoutes.SearchPage.route) {
-                            NavRoutes.SearchPage.route // Navigate to base route without arguments
-                        } else {
-                            item.route
-                        }
-                        navController.navigate(routeToNavigate) {
+                        
+                        navController.navigate(item.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -141,53 +139,34 @@ fun BottomNavigationBar(
     }
 }
 
-fun shouldShowBottomBar(currentRoute: String?, navBackStackEntry: NavBackStackEntry?): Boolean {
-    val mainScreenRoutes = setOf(
-        NavRoutes.HomePage.route,
-        NavRoutes.PlannerPage.route,
-        NavRoutes.ShoppingListPage.route,
-        NavRoutes.CommunityHome.route,
-        NavRoutes.ProfilePage.route // Assuming ProfilePage is a main screen with bottom nav
-        // Add other routes that should always show the bottom bar
-    )
+fun shouldShowBottomBar(navBackStackEntry: NavBackStackEntry?): Boolean {
+    val destination = navBackStackEntry?.destination ?: return false
 
-    // Handle SearchPage separately
-    if (currentRoute?.startsWith(NavRoutes.SearchPage.route) == true) {
-        val returnToPlanner = navBackStackEntry?.arguments?.getBoolean("returnToPlanner", false) ?: false
-        return !returnToPlanner // Show bottom bar ONLY if not returning to planner
+    // Main screens that show the bottom bar
+    val isMainScreen = destination.hasRoute<Destination.Home>() ||
+            destination.hasRoute<Destination.Planner>() ||
+            destination.hasRoute<Destination.ShoppingList>() ||
+            destination.hasRoute<Destination.CommunityHome>() ||
+            destination.hasRoute<Destination.Profile>()
+
+    // Handle Search separately due to returnToPlanner logic
+    if (destination.hasRoute<Destination.Search>()) {
+        val returnToPlanner = try {
+            val search: Destination.Search = navBackStackEntry.toRoute()
+            search.returnToPlanner
+        } catch (e: Exception) {
+            false
+        }
+        return !returnToPlanner
     }
 
-    // For other main screens
-    return currentRoute?.let { route ->
-        mainScreenRoutes.any { mainRoute ->
-            route == mainRoute || (mainRoute == NavRoutes.HomePage.route && route.startsWith("meal_detail"))
-        }
-    } ?: false
+    return isMainScreen
 }
 
-fun shouldShowTopBar(currentRoute: String?): Boolean {
-    // Define screens that should show the ModernTopBar
-    val screensWithTopBar = setOf(
-        NavRoutes.CommunityHome.route
-        // Add other screens that should use ModernTopBar here
-    )
+fun shouldShowTopBar(navBackStackEntry: NavBackStackEntry?): Boolean {
+    val destination = navBackStackEntry?.destination ?: return false
     
-    // Define screens that should NOT show the ModernTopBar
-    // (because they implement their own navigation UI)
-    val screensWithoutTopBar = setOf(
-        NavRoutes.HomePage.route,
-        // Other screens with custom headers/navigation
-        NavRoutes.StartPage.route,
-        NavRoutes.LoginPage.route,
-        NavRoutes.RegisterPage.route,
-        NavRoutes.ProfilePage.route,
-        NavRoutes.PlannerPage.route,
-        NavRoutes.SearchPage.route,
-        NavRoutes.ShoppingListPage.route
-    )
-    
-    return currentRoute?.let { route ->
-        // Show ModernTopBar if the route is in screensWithTopBar AND not in screensWithoutTopBar
-        route in screensWithTopBar && route !in screensWithoutTopBar
-    } ?: false
+    // Screens with top bar
+    return destination.hasRoute<Destination.Home>() ||
+            destination.hasRoute<Destination.CommunityHome>()
 }

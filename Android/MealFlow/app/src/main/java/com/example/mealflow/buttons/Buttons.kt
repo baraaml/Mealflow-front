@@ -51,30 +51,6 @@ fun BackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
-//@Composable
-//fun DynamicButton(
-//    onClick: () -> Unit, textOnButton: String,
-//    modifier: Modifier = Modifier,
-//    buttonWidthDynamic: Int
-//) {
-//    Button(
-//        onClick = onClick,
-//        modifier = Modifier
-//            .width(buttonWidthDynamic.dp)
-//            .padding(20.dp)
-//            .height(50.dp)
-//            .border(2.dp, Color.Black, RoundedCornerShape(50.dp))
-//        , shape = RoundedCornerShape(50.dp)
-//    ) {
-//        Text(
-//            text = textOnButton,
-//            fontSize = 20.sp,
-//            fontWeight = FontWeight.Bold,
-//            color = Color.White
-//        )
-//    }
-//}
-
 @Composable
 fun DynamicButton(
     onClick: () -> Unit,

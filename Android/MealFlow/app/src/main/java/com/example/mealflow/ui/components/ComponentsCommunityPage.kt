@@ -76,6 +76,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import coil.compose.rememberAsyncImagePainter
 import com.example.mealflow.R
 import com.example.mealflow.data.model.SingleCommunity
@@ -361,7 +362,7 @@ fun ModernMembersAndRecipesCount(community: SingleCommunity?, navController: Nav
                 icon = Icons.Rounded.Group,
                 count = community?._count?.members ?: 0,
                 label = "Members",
-                onClick = { navController.navigate("Members Page") }
+                onClick = { navController.navigate(Destination.Members) }
             )
 
             // Use a softer separator line

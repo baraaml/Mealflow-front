@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.database.UserPreferencesManager
 import com.example.mealflow.network.logoutApi
 import com.example.mealflow.viewModel.SearchViewModel
@@ -163,7 +164,7 @@ fun ModernSearchTopBar(
                             profileImageUrl = profileImageUrl,
                             size = 45.dp,
                             cornerRadius = 12.dp,
-                            onClick = { navController.navigate("Profile Page") }
+                            onClick = { navController.navigate(Destination.Profile) }
                         )
 
                         Spacer(modifier = Modifier.width(14.dp))
@@ -201,7 +202,7 @@ fun ModernSearchTopBar(
                             if (it.length >= 2) {
                                 searchViewModel.search(it, searchType)
                                 showSearchSuggestions = false
-                                navController.navigate("search_results")
+                                navController.navigate(Destination.SearchResults)
                             }
                         },
                         active = showSearchSuggestions,
@@ -276,7 +277,7 @@ fun ModernSearchTopBar(
                                     searchQuery = suggestion
                                     searchViewModel.search(suggestion, searchType)
                                     showSearchSuggestions = false
-                                    navController.navigate("search_results")
+                                    navController.navigate(Destination.SearchResults)
                                 },
                                 onSearchTypeChange = { type ->
                                     searchViewModel.updateType(type)
@@ -294,7 +295,7 @@ fun ModernSearchTopBar(
                             if (it.length >= 2) {
                                 searchViewModel.search(it, searchType)
                                 showSearchSuggestions = false
-                                navController.navigate("search_results")
+                                navController.navigate(Destination.SearchResults)
                             }
                         },
                         active = showSearchSuggestions,
@@ -352,7 +353,7 @@ fun ModernSearchTopBar(
                                     searchQuery = suggestion
                                     searchViewModel.search(suggestion, searchType)
                                     showSearchSuggestions = false
-                                    navController.navigate("search_results")
+                                    navController.navigate(Destination.SearchResults)
                                 },
                                 onSearchTypeChange = { type ->
                                     searchViewModel.updateType(type)
@@ -462,7 +463,7 @@ fun ModernSearchTopBar(
                             .fillMaxWidth()
                             .clickable {
                                 showBottomSheet = false
-                                navController.navigate("Update Profile")
+                                navController.navigate(Destination.UpdateProfile)
                             }
                             .padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically

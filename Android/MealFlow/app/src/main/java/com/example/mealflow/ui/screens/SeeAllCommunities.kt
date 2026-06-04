@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -240,7 +241,7 @@ fun AllCommunitiesScreen(
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 userPreferencesManager.saveCommunityId(communityId)
                                             }
-                                            navController.navigate("Community Page")
+                                            navController.navigate(Destination.CommunityPage)
                                         },
                                         onJoinClick = { communityId ->
                                             joinCommunityApi(communityId, context)
@@ -438,7 +439,7 @@ fun MyCommunitiesScreen(
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 userPreferencesManager.saveCommunityId(communityId)
                                             }
-                                            navController.navigate("Community Page")
+                                            navController.navigate(Destination.CommunityPage)
                                         },
                                         onJoinClick = { communityId ->
                                             joinCommunityApi(communityId, context)

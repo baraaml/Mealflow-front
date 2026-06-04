@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 
 @Composable
 fun SetupPhysicalInfoScreen(
@@ -103,7 +104,7 @@ fun SetupPhysicalInfoScreen(
             Button(
                 onClick = {
                     viewModel.physicalInfoSetup(context, navController)
-                    navController.navigate("setup_photos")
+                    navController.navigate(Destination.SetupPhotos)
                           },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,7 +128,7 @@ fun SetupPhysicalInfoScreen(
 
             // Skip this step
             TextButton(
-                onClick = { navController.navigate("setup_photos") },
+                onClick = { navController.navigate(Destination.SetupPhotos) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(

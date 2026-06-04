@@ -2,48 +2,42 @@ package com.example.mealflow.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.mealflow.R
 import com.example.mealflow.database.UserPreferencesManager
 import com.example.mealflow.network.FollowerRelationship
@@ -75,14 +69,10 @@ fun FollowersPage(
 
     var pageState by remember { mutableStateOf(FollowersPageState.LOADING) }
 
-    val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = isLoading
-    )
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
-    // Determine page state based on loading state and data
     LaunchedEffect(followersPagingItems.loadState, followersPagingItems.itemCount) {
         val loadState = followersPagingItems.loadState
-
         pageState = when {
             loadState.refresh is LoadState.Loading -> FollowersPageState.LOADING
             loadState.refresh is LoadState.Error -> FollowersPageState.ERROR
@@ -101,7 +91,7 @@ fun FollowersPage(
             onBackClick = { navController.popBackStack() }
         )
 
-        SearchBar(
+        FollowersSearchBar(
             query = searchQuery ?: "",
             onQueryChange = { viewModel.updateSearchQuery(it) },
             onClearQuery = { viewModel.clearSearch() }
@@ -118,23 +108,14 @@ fun FollowersPage(
                     contentColor = MaterialTheme.colorScheme.primary
                 )
             },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 when (pageState) {
-                    FollowersPageState.LOADING -> {
-                        LoadingState(modifier = Modifier.align(Alignment.Center))
-                    }
+                    FollowersPageState.LOADING -> FollowersLoadingState(modifier = Modifier.align(Alignment.Center))
                     FollowersPageState.SUCCESS -> {
                         if (followersPagingItems.itemCount == 0 && !searchQuery.isNullOrEmpty()) {
-                            EmptySearchState(
-                                searchQuery = searchQuery!!,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                            FollowersEmptySearchState(searchQuery = searchQuery!!, modifier = Modifier.align(Alignment.Center))
                         } else {
                             FollowersList(
                                 followersPagingItems = followersPagingItems,
@@ -142,22 +123,14 @@ fun FollowersPage(
                                     coroutineScope.launch {
                                         val userPrefs = UserPreferencesManager(context)
                                         userPrefs.saveUserId(followerRelationship.follower.id)
-                                        navController.navigate("User Page")
+                                        navController.navigate(Destination.User)
                                     }
                                 }
                             )
                         }
                     }
-                    FollowersPageState.ERROR -> {
-                        ErrorState(
-                            message = errorState ?: "Failed to load followers",
-                            onRetry = { viewModel.refresh() },
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    FollowersPageState.EMPTY -> {
-                        EmptyState(modifier = Modifier.align(Alignment.Center))
-                    }
+                    FollowersPageState.ERROR -> FollowersErrorState(message = errorState ?: "Failed to load followers", onRetry = { viewModel.refresh() }, modifier = Modifier.align(Alignment.Center))
+                    FollowersPageState.EMPTY -> FollowersEmptyState(modifier = Modifier.align(Alignment.Center))
                 }
             }
         }
@@ -178,14 +151,10 @@ fun UserFollowersPage(
 
     var pageState by remember { mutableStateOf(FollowersPageState.LOADING) }
 
-    val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = isLoading
-    )
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
-    // Determine page state based on loading state and data
     LaunchedEffect(followersPagingItems.loadState, followersPagingItems.itemCount) {
         val loadState = followersPagingItems.loadState
-
         pageState = when {
             loadState.refresh is LoadState.Loading -> FollowersPageState.LOADING
             loadState.refresh is LoadState.Error -> FollowersPageState.ERROR
@@ -204,7 +173,7 @@ fun UserFollowersPage(
             onBackClick = { navController.popBackStack() }
         )
 
-        SearchBar(
+        FollowersSearchBar(
             query = searchQuery ?: "",
             onQueryChange = { viewModel.updateSearchQuery(it) },
             onClearQuery = { viewModel.clearSearch() }
@@ -221,23 +190,14 @@ fun UserFollowersPage(
                     contentColor = MaterialTheme.colorScheme.primary
                 )
             },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 when (pageState) {
-                    FollowersPageState.LOADING -> {
-                        LoadingState(modifier = Modifier.align(Alignment.Center))
-                    }
+                    FollowersPageState.LOADING -> FollowersLoadingState(modifier = Modifier.align(Alignment.Center))
                     FollowersPageState.SUCCESS -> {
                         if (followersPagingItems.itemCount == 0 && !searchQuery.isNullOrEmpty()) {
-                            EmptySearchState(
-                                searchQuery = searchQuery!!,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                            FollowersEmptySearchState(searchQuery = searchQuery!!, modifier = Modifier.align(Alignment.Center))
                         } else {
                             FollowersList(
                                 followersPagingItems = followersPagingItems,
@@ -245,22 +205,14 @@ fun UserFollowersPage(
                                     coroutineScope.launch {
                                         val userPrefs = UserPreferencesManager(context)
                                         userPrefs.saveUserId(followerRelationship.follower.id)
-                                        navController.navigate("User Page")
+                                        navController.navigate(Destination.User)
                                     }
                                 }
                             )
                         }
                     }
-                    FollowersPageState.ERROR -> {
-                        ErrorState(
-                            message = errorState ?: "Failed to load followers",
-                            onRetry = { viewModel.refresh() },
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    FollowersPageState.EMPTY -> {
-                        EmptyState(modifier = Modifier.align(Alignment.Center))
-                    }
+                    FollowersPageState.ERROR -> FollowersErrorState(message = errorState ?: "Failed to load followers", onRetry = { viewModel.refresh() }, modifier = Modifier.align(Alignment.Center))
+                    FollowersPageState.EMPTY -> FollowersEmptyState(modifier = Modifier.align(Alignment.Center))
                 }
             }
         }
@@ -293,13 +245,10 @@ fun FollowersList(
             }
         }
 
-        // Show loading footer when appending data
         if (followersPagingItems.loadState.append is LoadState.Loading) {
             item {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
@@ -322,23 +271,19 @@ fun FollowerUserItem(
         onClick = onUserClick,
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = followerRelationship.follower.profilePicture,
-                contentDescription = "Profile picture of ${followerRelationship.follower.name}",
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(followerRelationship.follower.profilePicture)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Profile picture",
+                modifier = Modifier.size(50.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceVariant),
                 placeholder = painterResource(R.drawable.loading_placeholder),
                 error = painterResource(R.drawable.profile_default),
                 contentScale = ContentScale.Crop
@@ -346,64 +291,104 @@ fun FollowerUserItem(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 val fullName = "${followerRelationship.follower.name ?: ""} ${followerRelationship.follower.lastName ?: ""}".trim()
                 if (fullName.isNotEmpty()) {
-                    Text(
-                        text = fullName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Text(text = fullName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
-
-                // عرض username إذا كان متوفراً
                 followerRelationship.follower.username?.let { username ->
-                    Text(
-                        text = "@$username",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Text(text = "@$username", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-
-                // عرض تاريخ المتابعة
-                Text(
-                    text = "Follower since ${formatDate(followerRelationship.createdAt)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
-                )
+                Text(text = "Follower since ${followerRelationship.createdAt}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
             }
 
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Navigate to profile",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp)
-            )
+            Icon(imageVector = Icons.Default.ChevronRight, contentDescription = "Navigate", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
         }
     }
 }
 
-
-// Helper function to format the date from ISO format to something more readable
-private fun formatDate(isoDate: String): String {
-    // You could implement a proper date formatter here
-    // For simplicity, just return a shortened version
-    return try {
-        // Just get the date part for now
-        isoDate.split("T").firstOrNull()?.let { date ->
-            val parts = date.split("-")
-            if (parts.size == 3) {
-                "${parts[2]}/${parts[1]}/${parts[0]}"
-            } else {
-                isoDate
-            }
-        } ?: isoDate
-    } catch (e: Exception) {
-        Log.d("formatDate","e: $e")
-        isoDate
+@Composable
+fun FollowersLoadingState(modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Loading followers...", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
+}
+
+@Composable
+fun FollowersErrorState(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Icon(imageVector = Icons.Default.Person, contentDescription = "Error", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(64.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Failed to load followers", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onRetry, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text("Retry") }
+    }
+}
+
+@Composable
+fun FollowersEmptyState(modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Icon(imageVector = Icons.Default.Person, contentDescription = "No Followers", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(64.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "No followers", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "You do not have any followers yet.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 32.dp))
+    }
+}
+
+@Composable
+fun FollowersEmptySearchState(searchQuery: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Icon(imageVector = Icons.Default.Search, contentDescription = "No Results", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(64.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "No results found", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "There are no followers that match \"$searchQuery\"", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 32.dp))
+    }
+}
+
+@Composable
+fun FollowersSearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onClearQuery: () -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .focusRequester(focusRequester)
+            .shadow(4.dp, RoundedCornerShape(8.dp)),
+        placeholder = { Text("Search followers...") },
+        leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Search") },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = onClearQuery) {
+                    Icon(imageVector = Icons.Default.Clear, contentDescription = "Clear")
+                }
+            }
+        },
+        singleLine = true,
+        shape = RoundedCornerShape(8.dp),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() })
+    )
 }

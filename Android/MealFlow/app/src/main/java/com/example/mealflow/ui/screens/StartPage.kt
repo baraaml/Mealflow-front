@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import com.example.mealflow.R
 import kotlinx.coroutines.delay
@@ -100,7 +101,7 @@ fun StartPage(navController: NavController) {
 
                         // Navigate with delay to see animation complete
                         delay(100)
-                        navController.navigate("Register Page") {
+                        navController.navigate(Destination.Register) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
@@ -146,7 +147,7 @@ fun StartPage(navController: NavController) {
                             .padding(start = 4.dp)
                             .clickable {
                                 coroutineScope.launch {
-                                    navController.navigate("Login Page") {
+                                    navController.navigate(Destination.Login) {
                                         popUpTo(navController.graph.startDestinationId)
                                         launchSingleTop = true
                                     }
@@ -166,5 +167,3 @@ fun PreviewStartPage()
 {
     StartPage(navController = rememberNavController())
 }
-//---------------------------------------------------------------
-//---------------------------------------------------------------

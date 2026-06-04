@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import com.example.mealflow.R
 import com.example.mealflow.utils.*
@@ -58,8 +59,8 @@ fun LoginPage(navController: NavController) {
 
     LaunchedEffect(navigateToHome) {
         if (navigateToHome) {
-            navController.navigate("Home Page") {
-                popUpTo("Start Page") { inclusive = true }
+            navController.navigate(Destination.Home) {
+                popUpTo(Destination.Start) { inclusive = true }
                 launchSingleTop = true
             }
             viewModel.onHomeNavigationComplete()
@@ -166,7 +167,7 @@ fun LoginPage(navController: NavController) {
             ) {
                 Text(
                     text = stringResource(id = R.string.ForgotPassword),
-                    Modifier.clickable { navController.navigate("Forget Password Page") }.padding(end = 25.dp),
+                    Modifier.clickable { navController.navigate(Destination.ForgetPassword) }.padding(end = 25.dp),
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.sflight)),
                     color = MaterialTheme.colorScheme.error
@@ -206,7 +207,7 @@ fun LoginPage(navController: NavController) {
                 )
                 Text(
                     text = stringResource(id = R.string.Register),
-                    Modifier.clickable { navController.navigate("Register Page") },
+                    Modifier.clickable { navController.navigate(Destination.Register) },
                     color = MaterialTheme.colorScheme.tertiary,
                     fontFamily = FontFamily(Font(R.font.sfmed))
                 )

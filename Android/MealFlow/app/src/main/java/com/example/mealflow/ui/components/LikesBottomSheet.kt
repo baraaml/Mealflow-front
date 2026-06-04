@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -42,14 +43,6 @@ fun LikesBottomSheet(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    // Remove the viewModel creation since it's passed as parameter
-    // val viewModel: PostLikesViewModel = viewModel()
-
-    // Remove the LaunchedEffect for setPostId since it's already set in PostInteractions
-    // LaunchedEffect(postId) {
-    //     viewModel.setPostId(postId)
-    // }
 
     val likes = viewModel.postLikesFlow.collectAsLazyPagingItems()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -86,9 +79,9 @@ fun LikesBottomSheet(
                         val isMyProfile = (myId == userId)
 
                         if (isMyProfile) {
-                            navController.navigate("Profile Page")
+                            navController.navigate(Destination.Profile)
                         } else {
-                            navController.navigate("User Page")
+                            navController.navigate(Destination.User)
                         }
                         onDismiss()
                     }

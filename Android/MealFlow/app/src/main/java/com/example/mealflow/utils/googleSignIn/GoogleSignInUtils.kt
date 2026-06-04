@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.mealflow.R
 import com.example.mealflow.database.UserPreferencesManager
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.database.token.TokenManager
 import com.example.mealflow.network.ApiClient
 import com.google.android.gms.auth.api.signin.*
@@ -244,7 +245,7 @@ private fun handleSuccessfulResponse(
             }
             if (userData.isNewUser) {
                 Log.d("GoogleSignIn", "✅ New user - navigating to setup_welcome")
-                navController.navigate("setup_welcome") {
+                navController.navigate(Destination.SetupWelcome) {
                     // Remove all previous pages from the back stack
                     popUpTo(0) { inclusive = true }
                     // Prevent opening the same page multiple times
@@ -254,8 +255,8 @@ private fun handleSuccessfulResponse(
                 }
             } else {
                 Log.d("GoogleSignIn", "✅ Existing user - navigating to Home Page")
-                navController.navigate("Home Page") {
-                    popUpTo("Login Page") { inclusive = true }
+                navController.navigate(Destination.Home) {
+                    popUpTo(Destination.Login) { inclusive = true }
                     launchSingleTop = true
                 }
             }

@@ -30,7 +30,7 @@ import androidx.navigation.NavController
 import com.example.mealflow.data.model.DayPlan
 import com.example.mealflow.data.model.MealType
 import com.example.mealflow.data.model.PlannedMeal
-import com.example.mealflow.navigation.NavRoutes
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.utils.DateUtils
 import com.example.mealflow.viewModel.MealPlannerViewModel
 import androidx.compose.foundation.BorderStroke
@@ -219,7 +219,7 @@ fun AllPlansScreen(
                                 onAddSnackClick = { onAddMealToDate(dayPlan.date, MealType.SNACK) },
                                 onAddOtherClick = { onAddMealToDate(dayPlan.date, MealType.OTHER) },
                                 onMealCardClick = { mealId: String ->
-                                    navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(mealId))
+                                    navController.navigate(Destination.MealDetail(mealId))
                                 },
                                 onRemoveMealClick = { plannedMealId: String ->
                                     viewModel.deletePlannedMeal(plannedMealId)

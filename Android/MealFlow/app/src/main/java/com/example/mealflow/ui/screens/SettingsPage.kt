@@ -81,7 +81,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.mealflow.navigation.NavRoutes
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.utils.updateApp.VersionCheckDialog
 import com.example.mealflow.utils.updateApp.VersionViewModel
 import com.example.mealflow.viewModel.SettingsViewModel
@@ -335,7 +335,7 @@ private fun AccountSection(
             icon = Icons.Default.Person,
             onClick = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                navController.navigate(NavRoutes.ProfilePage.route)
+                navController.navigate(Destination.Profile)
             }
         )
 
@@ -345,7 +345,7 @@ private fun AccountSection(
             icon = Icons.Default.Policy,
             onClick = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                navController.navigate("privacy_policy")
+                navController.navigate(Destination.PrivacyPolicy)
             }
         )
 
@@ -355,7 +355,7 @@ private fun AccountSection(
             icon = Icons.Default.Description,
             onClick = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                navController.navigate("terms_of_service")
+                navController.navigate(Destination.TermsOfService)
             }
         )
     }
@@ -382,7 +382,7 @@ private fun SupportSection(
             icon = Icons.AutoMirrored.Filled.ContactSupport,
             onClick = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                navController.navigate("help_center")
+                navController.navigate(Destination.HelpCenter)
             }
         )
         SettingsButton(
@@ -391,7 +391,7 @@ private fun SupportSection(
             icon = Icons.Default.BugReport,
             onClick = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                navController.navigate("report_bug")
+                navController.navigate(Destination.ReportBug)
             }
         )
         val viewModel : VersionViewModel = viewModel()

@@ -88,6 +88,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -664,7 +665,7 @@ fun ProfilePage(
                                         dietaryTags = meal.dietaryTags as List<String>,
                                         rating = meal.rating.toFloat() ,
                                         onClick = {
-                                            navController.navigate("meal_detail/${meal.mealId}")
+                                            navController.navigate(Destination.MealDetail(meal.mealId))
                                         },
                                         onSaveClick = {
 //                                            saveMealApi(
@@ -730,7 +731,7 @@ fun ProfilePage(
                                                     community.community.id.toString()
                                                 )
                                             }
-                                            navController.navigate("Community Page")
+                                            navController.navigate(Destination.CommunityPage)
                                         },
                                         isMember = true,
                                         modifier = Modifier.padding(8.dp)
@@ -890,7 +891,7 @@ fun ProfilePage(
                         title = "Create Post",
                         onClick = {
                             isSheetOpen = false
-                            navController.navigate("PostCreationPage")
+                            navController.navigate(Destination.PostCreation)
                         }
                     )
 
@@ -904,7 +905,7 @@ fun ProfilePage(
                         title = "Create Recipe",
                         onClick = {
                             isSheetOpen = false
-                            navController.navigate("RecipeCreationPage")
+                            navController.navigate(Destination.RecipeCreation)
                         }
                     )
                 }
@@ -959,7 +960,7 @@ fun MoreOptionsBottomSheet(
                     title = "Update Profile",
                     onClick = {
                         showBottomSheet = false
-                        navController.navigate("Update Profile")
+                        navController.navigate(Destination.UpdateProfile)
                     }
                 )
 

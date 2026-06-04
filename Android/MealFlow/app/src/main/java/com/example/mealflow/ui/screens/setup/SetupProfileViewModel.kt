@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import android.content.Context
 import android.net.Uri
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.network.MyProfileApiService
 import com.example.mealflow.network.updateUserProfileApi
 
@@ -53,19 +54,19 @@ class SetupProfileViewModel : ViewModel() {
 
     fun skipSetup(navController: NavController) {
         // Navigate to main app or home screen
-        navController.navigate("setup_basic_info")
+        navController.navigate(Destination.SetupBasicInfo)
     }
     fun skipSetupBasicInfoScreen(navController: NavController) {
         // Navigate to main app or home screen
-        navController.navigate("setup_physical_info")
+        navController.navigate(Destination.SetupPhysicalInfo)
     }
     fun skipSetupPhysicalInfoScreen(navController: NavController) {
         // Navigate to main app or home screen
-        navController.navigate("setup_photos")
+        navController.navigate(Destination.SetupPhotos)
     }
     fun skipSetupPhotosScreen(navController: NavController) {
         // Navigate to main app or home screen
-        navController.navigate("Questions Page")
+        navController.navigate(Destination.Questions)
     }
 
     fun completeSetup(context: Context, navController: NavController) {
@@ -90,7 +91,7 @@ class SetupProfileViewModel : ViewModel() {
                 if (result?.success?:true) {
                     successMessage = "Profile setup completed successfully!"
                     // Navigate to main app
-                    navController.navigate("Questions Page")
+                    navController.navigate(Destination.Questions)
                 } else {
                     errorMessage = result?.message ?: "Failed to setup profile"
                 }
@@ -123,7 +124,7 @@ class SetupProfileViewModel : ViewModel() {
                 if (result?.success ?: true) {
                     successMessage = "Profile setup completed successfully!"
                     // Navigate to main app
-                    navController.navigate("Questions Page")
+                    navController.navigate(Destination.Questions)
                 } else {
                     errorMessage = result?.message ?: "Failed to setup profile"
                 }
@@ -156,7 +157,7 @@ class SetupProfileViewModel : ViewModel() {
                 if (result?.success ?: true) {
                     successMessage = "Profile setup completed successfully!"
                     // Navigate to main app
-                    navController.navigate("Questions Page")
+                    navController.navigate(Destination.Questions)
                 } else {
                     errorMessage = result?.message ?: "Failed to setup profile"
                 }
@@ -189,7 +190,7 @@ class SetupProfileViewModel : ViewModel() {
                 if (result?.success ?: true) {
                     successMessage = "Profile setup completed successfully!"
                     // Navigate to main app
-                    navController.navigate("Questions Page")
+                    navController.navigate(Destination.Questions)
                 } else {
                     errorMessage = result?.message ?: "Failed to setup profile"
                 }

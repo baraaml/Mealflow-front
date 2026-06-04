@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.navigation.compose.rememberNavController
 import com.example.mealflow.R
 import com.example.mealflow.utils.googleSignIn.GoogleSignInViewModel
@@ -288,7 +289,7 @@ fun RegisterPage(
                 )
                 Text(text = "Login",
                     Modifier
-                        .clickable(onClick = {navController.navigate("Login Page")}
+                        .clickable(onClick = {navController.navigate(Destination.Login)}
                         ),
                     color = MaterialTheme.colorScheme.tertiary,
                     fontFamily = FontFamily(Font(R.font.sfmed))

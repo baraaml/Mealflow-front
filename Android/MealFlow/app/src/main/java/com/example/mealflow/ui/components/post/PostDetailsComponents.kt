@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mealflow.R
@@ -253,7 +254,7 @@ fun CommunityPostHeader(
                     post.communityId?.let { communityId ->
                         coroutineScope.launch {
                             UserPreferencesManager(context).saveCommunityId(communityId)
-                            navController.navigate("Community Page")
+                            navController.navigate(Destination.CommunityPage)
                         }
                     }
                 }
@@ -281,9 +282,9 @@ fun CommunityPostHeader(
                     coroutineScope.launch {
                         UserPreferencesManager(context).saveUserId(post.author.id)
                         if (isMyPost) {
-                            navController.navigate("Profile Page")
+                            navController.navigate(Destination.Profile)
                         } else {
-                            navController.navigate("User Page")
+                            navController.navigate(Destination.User)
                         }
                     }
                 }
@@ -360,9 +361,9 @@ fun ProfilePostHeader(
                     coroutineScope.launch {
                         UserPreferencesManager(context).saveUserId(post.author.id)
                         if (isMyPost) {
-                            navController.navigate("Profile Page")
+                            navController.navigate(Destination.Profile)
                         } else {
-                            navController.navigate("User Page")
+                            navController.navigate(Destination.User)
                         }
                     }
                 }
@@ -415,5 +416,5 @@ fun ProfilePostHeader(
 }
 
 fun navigateToPostDetails(navController: NavController, postId: String) {
-    navController.navigate("post_details/$postId")
+    navController.navigate(Destination.PostDetails(postId))
 }

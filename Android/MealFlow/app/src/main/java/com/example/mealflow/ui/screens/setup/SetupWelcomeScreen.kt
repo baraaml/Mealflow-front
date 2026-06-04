@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 
 @Composable
 fun SetupWelcomeScreen(
@@ -84,7 +85,7 @@ fun SetupWelcomeScreen(
 
             // Get Started Button
             Button(
-                onClick = { navController.navigate("setup_basic_info") },
+                onClick = { navController.navigate(Destination.SetupBasicInfo) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -107,7 +108,7 @@ fun SetupWelcomeScreen(
 
             // Skip Button
             TextButton(
-                onClick = { navController.navigate("Home Page") },
+                onClick = { navController.navigate(Destination.Home) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(

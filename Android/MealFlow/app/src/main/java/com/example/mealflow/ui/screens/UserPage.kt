@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -671,12 +672,7 @@ fun UserPage(
                                         dietaryTags = meal.dietaryTags as List<String>,
                                         rating = meal.rating.toFloat() ,
                                         onClick = {
-//                                            CoroutineScope(Dispatchers.IO).launch {
-//                                                userPreferencesManager.saveMealId(
-//                                                    meal.mealId.toString()
-//                                                )
-//                                            }
-                                            navController.navigate("meal_detail/${meal.mealId}")
+                                            navController.navigate(Destination.MealDetail(meal.mealId))
                                         },
                                         onSaveClick = {
 //                                            saveMealApi(
@@ -744,7 +740,7 @@ fun UserPage(
                                                     community.community.id.toString()
                                                 )
                                             }
-                                            navController.navigate("Community Page")
+                                            navController.navigate(Destination.CommunityPage)
                                         },
                                         isMember = true,
                                         modifier = Modifier.padding(8.dp)

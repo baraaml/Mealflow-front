@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.mealflow.database.token.TokenManager
+import com.example.mealflow.navigation.Destination
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -77,7 +78,7 @@ fun quickLoginApi(
                     responseBody.data?.let {
                         tokenManager.saveTokens(it.accessToken, it.refreshToken)
                     }
-                    navController.navigate("Home Page")
+                    navController.navigate(Destination.Home)
                 } else {
                     Log.e("API", "❌ Login failed : ${responseBody.message}")
                     withContext(Dispatchers.Main) {

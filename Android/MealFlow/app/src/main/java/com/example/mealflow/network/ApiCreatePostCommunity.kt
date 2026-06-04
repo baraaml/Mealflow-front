@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.mealflow.database.UserPreferencesManager
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.database.token.TokenManager
 import com.example.mealflow.utils.JsonProvider
 import com.example.mealflow.viewModel.CreatePostViewModel
@@ -157,7 +158,7 @@ fun createPostCommunityApi(
                 if (apiResponse != null) {
                     Toast.makeText(context, "Post created successfully!", Toast.LENGTH_LONG).show()
                     viewModel?.resetState() // Reset state after successful post
-                    navController.navigate("Community Page")
+                    navController.navigate(Destination.CommunityPage)
                 } else {
                     viewModel?.errorMessage = "Failed to create post"
                     viewModel?.isLoading = false // Only set loading to false on error

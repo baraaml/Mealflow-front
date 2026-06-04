@@ -40,7 +40,7 @@ import com.example.mealflow.data.model.CompositeShoppingList
 import com.example.mealflow.data.model.EnhancedShoppingListItem
 import com.example.mealflow.data.model.ShoppingListItem
 import com.example.mealflow.data.model.ShoppingPlan
-import com.example.mealflow.navigation.NavRoutes
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.ui.components.*
 import com.example.mealflow.utils.DateUtils
 import com.example.mealflow.viewModel.ShoppingListViewModel
@@ -161,7 +161,7 @@ fun ShoppingListScreen(
                     EmptyShoppingListMessage(
                         onCreateShoppingListClick = {
                             // Navigate to DaysSelectionScreen to start the meal planning flow
-                            navController?.navigate(NavRoutes.DaysSelectionScreen.route)
+                            navController?.navigate(Destination.DaysSelection)
                         }
                     )
                 }

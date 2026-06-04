@@ -69,81 +69,6 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.mealflow.viewModel.CreateCommunityViewModel
 
-//@Composable
-//fun TopBarCreateCommunity(
-//    navController: NavController,
-//    textNumber: String,
-//    onClick: () -> Unit,
-//    isButtonEnabled: Boolean,
-//    buttonText: String = "Next" // Default button text
-//) {
-//    // Create the interaction source
-//    val interactionSource = remember { MutableInteractionSource() }
-//
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.Start
-//    ) {
-//        // Back Button
-//        IconButton(
-//            onClick = { navController.popBackStack() },
-//            modifier = Modifier
-//                .size(40.dp)
-//                .padding(end = 16.dp)
-//        ) {
-//            Icon(
-//                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                contentDescription = "Back",
-//                tint = MaterialTheme.colorScheme.onSurface
-//            )
-//        }
-//
-//        // Step Number Text with Border
-//        Text(
-//            text = textNumber,
-//            modifier = Modifier
-//                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-//                .padding(horizontal = 12.dp, vertical = 6.dp),
-//            textAlign = TextAlign.Center,
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight.SemiBold,
-//            color = MaterialTheme.colorScheme.primary
-//        )
-//
-//        Spacer(modifier = Modifier.weight(1f)) // Spacer between text and button
-//
-//        // Next Button with custom design
-//        Button(
-//            onClick = onClick,
-//            enabled = isButtonEnabled,
-//            modifier = Modifier
-//                .padding(8.dp)
-//                .clip(RoundedCornerShape(50.dp)) // Rounded corners
-////                .background(
-////                    brush = Brush.horizontalGradient(
-////                        listOf(Color(0xFF009951), Color(0xFF007B43)) // Gradient color
-////                    )
-////                )
-//                .shadow(
-//                    elevation = 8.dp, // Shadow effect
-//                    shape = RoundedCornerShape(50.dp),
-//                    clip = false
-//                )
-//                .scale(1f) // Scale effect on interaction
-//                .hoverable(interactionSource) // Hover effect (works with touch interaction)
-//        ) {
-//            Text(
-//                text = buttonText, // Custom button text
-//                fontSize = 18.sp,
-//                fontWeight = FontWeight.Bold,
-//                color = Color.White
-//            )
-//        }
-//    }
-//}
 @Composable
 fun TopBarCreateCommunity(
     navController: NavController,
@@ -293,40 +218,6 @@ fun ImagePickerItem(title: String, subtitle: String? = null, onPickImage: () -> 
     }
 }
 
-
-//@Composable
-//fun PrivacySettingsScreen(viewModel: CreateCommunityViewModel = viewModel()) {
-//    var selectedOption by remember { mutableStateOf("") }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp)
-//    ) {
-//        PrivacyOption(
-//            title = "Public",
-//            description = "Anyone can search for, view, and contribute",
-//            icon = Icons.Default.Public,
-//            selected = selectedOption == "Public",
-//            onSelect = {
-//                selectedOption = "Public"
-//                viewModel.updateRecipeCreationPermission("ANY_MEMBER")
-//            }
-//        )
-//
-//        PrivacyOption(
-//            title = "Private",
-//            description = "Only approved members can view and contribute",
-//            icon = Icons.Default.Lock,
-//            selected = selectedOption == "Private",
-//            onSelect = {
-//                selectedOption = "Private"
-//                viewModel.updateRecipeCreationPermission("ANY_MEMBER")
-//            }
-//        )
-//    }
-//}
-
 @Composable
 fun PrivacyOption(
     title: String,
@@ -412,23 +303,6 @@ fun CardCommunityTest(
                         )
                 )
 
-//                Button(
-//                    onClick = {/*ToDo*/},
-//                    modifier = Modifier
-//                        .padding(12.dp)
-//                        .align(Alignment.TopEnd),
-//                    shape = RoundedCornerShape(12.dp),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = MaterialTheme.colorScheme.primary
-//                    )
-//                ) {
-//                    Text(
-//                        text = "Join",
-//                        style = MaterialTheme.typography.labelMedium.copy(
-//                            fontWeight = FontWeight.Bold
-//                        )
-//                    )
-//                }
             }
 
             Column(

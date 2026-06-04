@@ -27,8 +27,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.example.mealflow.navigation.NavRoutes
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mealflow.navigation.Destination
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,13 +38,15 @@ fun TelegramStyleDrawer(
     isOpen: Boolean,
     onOpenChange: (Boolean) -> Unit,
     navController: NavController,
-    currentRoute: String? = null,
     content: @Composable () -> Unit
 ) {
     val drawerWidth = 280.dp
     val drawerWidthPx = with(LocalDensity.current) { drawerWidth.toPx() }
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
+    
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
     // Simple animatable for drawer position
     val drawerOffset = remember { Animatable(if (isOpen) 0f else -drawerWidthPx) }
@@ -182,33 +186,33 @@ fun TelegramStyleDrawer(
                         SimpleDrawerItem(
                             icon = Icons.Default.Home,
                             text = "Home",
-                            isSelected = currentRoute == NavRoutes.HomePage.route,
+                            isSelected = currentDestination?.hasRoute<Destination.Home>() == true,
                             onClick = {
-                                navigateAndClose(navController, NavRoutes.HomePage.route, onOpenChange, haptic)
+                                navigateAndClose(navController, Destination.Home, onOpenChange, haptic)
                             }
                         )
                         SimpleDrawerItem(
                             icon = Icons.Default.CalendarMonth,
                             text = "Meal Planner",
-                            isSelected = currentRoute == NavRoutes.PlannerPage.route,
+                            isSelected = currentDestination?.hasRoute<Destination.Planner>() == true,
                             onClick = {
-                                navigateAndClose(navController, NavRoutes.PlannerPage.route, onOpenChange, haptic)
+                                navigateAndClose(navController, Destination.Planner, onOpenChange, haptic)
                             }
                         )
                         SimpleDrawerItem(
                             icon = Icons.Default.Search,
                             text = "Search Meals",
-                            isSelected = currentRoute == NavRoutes.SearchPage.route,
+                            isSelected = currentDestination?.hasRoute<Destination.Search>() == true,
                             onClick = {
-                                navigateAndClose(navController, NavRoutes.SearchPage.route, onOpenChange, haptic)
+                                navigateAndClose(navController, Destination.Search(), onOpenChange, haptic)
                             }
                         )
                         SimpleDrawerItem(
                             icon = Icons.Default.ShoppingCart,
                             text = "Shopping List",
-                            isSelected = currentRoute == NavRoutes.ShoppingListPage.route,
+                            isSelected = currentDestination?.hasRoute<Destination.ShoppingList>() == true,
                             onClick = {
-                                navigateAndClose(navController, NavRoutes.ShoppingListPage.route, onOpenChange, haptic)
+                                navigateAndClose(navController, Destination.ShoppingList, onOpenChange, haptic)
                             }
                         )
 
@@ -219,9 +223,9 @@ fun TelegramStyleDrawer(
                         SimpleDrawerItem(
                             icon = Icons.Default.Settings,
                             text = "Settings",
-                            isSelected = currentRoute == NavRoutes.SettingsPage.route,
+                            isSelected = currentDestination?.hasRoute<Destination.Settings>() == true,
                             onClick = {
-                                navigateAndClose(navController, NavRoutes.SettingsPage.route, onOpenChange, haptic)
+                                navigateAndClose(navController, Destination.Settings, onOpenChange, haptic)
                             }
                         )
                     }
@@ -292,18 +296,16 @@ private fun SimpleDrawerItem(
 
 private fun navigateAndClose(
     navController: NavController,
-    route: String,
+    destination: Any,
     onOpenChange: (Boolean) -> Unit,
     haptic: androidx.compose.ui.hapticfeedback.HapticFeedback
 ) {
-    if (navController.currentDestination?.route != route) {
-        navController.navigate(route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
+    navController.navigate(destination) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
         }
+        launchSingleTop = true
+        restoreState = true
     }
     onOpenChange(false)
     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)

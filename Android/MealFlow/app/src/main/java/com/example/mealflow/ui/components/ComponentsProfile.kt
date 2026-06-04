@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 
 @Composable
 fun ModernDescriptionSectionProfile(descriptionProfile:String) {
@@ -118,11 +119,11 @@ fun ModernFollowersAndFollowingCount(followersCount: Int, followingCount: Int, i
                 onClick = {
                     if(isUser)
                     {
-                        navController.navigate("UserFollowing Page")
+                        navController.navigate(Destination.UserFollowing)
                     }
                     else
                     {
-                        navController.navigate("Following Page")
+                        navController.navigate(Destination.Following)
                     }
                 }
             )
@@ -146,11 +147,11 @@ fun ModernFollowersAndFollowingCount(followersCount: Int, followingCount: Int, i
                 onClick = {
                     if(isUser)
                     {
-                        navController.navigate("UserFollowers Page")
+                        navController.navigate(Destination.UserFollowers)
                     }
                     else
                     {
-                        navController.navigate("Followers Page")
+                        navController.navigate(Destination.Followers)
                     }
                 }
             )

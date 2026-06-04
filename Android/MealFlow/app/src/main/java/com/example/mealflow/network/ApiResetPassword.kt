@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -73,7 +74,7 @@ fun resetPasswordApi(
                     if (responseBody.success) {
                         Log.d("Reset Password", "✅Successful Reset Password, go to the next page")
                         delay(1000)
-                        navController.navigate("Login Page")
+                        navController.navigate(Destination.Login)
                     } else {
                         Log.e("Reset Password", "❌ Reset Password failed: ${responseBody.message}")
                     }

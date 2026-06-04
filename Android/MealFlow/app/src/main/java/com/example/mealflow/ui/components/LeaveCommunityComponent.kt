@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.data.model.SingleCommunity
 import com.example.mealflow.network.hasNewAdmin
 import com.example.mealflow.network.isCommunityDeleted
@@ -117,7 +118,7 @@ fun JoinLeaveCommunityButton(
                         when {
                             response.isCommunityDeleted() -> {
                                 // Community was deleted, might need to navigate back
-                                navController.navigate("Community Home")
+                                navController.navigate(Destination.CommunityHome)
                             }
                             response.hasNewAdmin() -> {
                                 // Show info about new admin if needed
@@ -286,25 +287,3 @@ fun LeaveCommunityDialog(
         }
     }
 }
-
-// Usage example in your composable:
-/*
-@Composable
-fun CommunityScreen(community: Community?) {
-    var communityState by remember { mutableStateOf(community) }
-
-    // ... other UI elements
-
-    JoinLeaveCommunityButton(
-        community = communityState,
-        onCommunityStatusChanged = {
-            // Refresh community data here
-            // This could involve calling your API to get updated community info
-            // or updating the local state
-            refreshCommunityData { updatedCommunity ->
-                communityState = updatedCommunity
-            }
-        }
-    )
-}
-*/

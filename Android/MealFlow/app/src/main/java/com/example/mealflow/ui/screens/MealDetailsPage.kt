@@ -95,6 +95,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mealflow.navigation.Destination
 import coil.compose.AsyncImage
 import com.example.mealflow.R
 import com.example.mealflow.data.model.Meal
@@ -621,8 +622,7 @@ fun MealMoreOptionsButton(
                         showBottomSheet = false
                         try {
                             val mealJson = Gson().toJson(meal)
-                            val encodedMealJson = URLEncoder.encode(mealJson, StandardCharsets.UTF_8.toString())
-                            navController.navigate("cooking_mode/$encodedMealJson")
+                            navController.navigate(Destination.CookingMode(mealJson))
                         } catch (e: Exception) {
                             Log.e("MealDetailScreen", "Error navigating to cooking mode", e)
                         }

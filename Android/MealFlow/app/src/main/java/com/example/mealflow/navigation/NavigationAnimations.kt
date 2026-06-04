@@ -18,15 +18,6 @@ object NavigationAnimations {
     // Animation duration
     private const val ANIMATION_DURATION = 300
 
-    // Special routes tracking
-    private val bottomNavRoutes = setOf(
-        "Home Page",
-        "Search Page",
-        "Planner Page",
-        "Market Page",
-        "Community Home"
-    )
-
     // Default enter transition - slide in from right with fade
     fun enterTransition(scope: AnimatedContentTransitionScope<NavBackStackEntry>): EnterTransition {
         return slideInHorizontally(

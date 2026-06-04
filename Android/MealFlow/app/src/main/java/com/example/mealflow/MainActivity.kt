@@ -1,8 +1,5 @@
 package com.example.mealflow
 
-//import com.example.mealflow.ui.screens.createCommunity.FourthStep
-import FollowingPage
-import UserFollowingPage
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
@@ -66,30 +63,25 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import com.example.mealflow.data.model.Meal
 import com.example.mealflow.data.model.MealType
-import com.example.mealflow.data.repository.MealRepository
 import com.example.mealflow.database.UserPreferencesManager
 import com.example.mealflow.database.token.TokenManager
 import com.example.mealflow.navigation.BottomNavigationBar
-import com.example.mealflow.navigation.NavRoutes
-import com.example.mealflow.navigation.NavRoutes.HomePage
-import com.example.mealflow.navigation.NavRoutes.PlanConfigScreen
+import com.example.mealflow.navigation.Destination
 import com.example.mealflow.navigation.NavigationAnimations
 import com.example.mealflow.navigation.shouldShowBottomBar
 import com.example.mealflow.navigation.shouldShowTopBar
-import com.example.mealflow.network.ApiMeal
 import com.example.mealflow.network.CommentApiService
 import com.example.mealflow.network.Resource
 import com.example.mealflow.ui.components.AppState
@@ -102,6 +94,8 @@ import com.example.mealflow.ui.screens.CommunityHome
 import com.example.mealflow.ui.screens.CommunityPage
 import com.example.mealflow.ui.screens.CookingModeScreen
 import com.example.mealflow.ui.screens.FollowersPage
+import com.example.mealflow.ui.screens.FollowingPage
+import com.example.mealflow.ui.screens.UserFollowingPage
 import com.example.mealflow.ui.screens.ForgetPasswordPage
 import com.example.mealflow.ui.screens.HealthDataScreen
 import com.example.mealflow.ui.screens.HelpCenterPage
@@ -157,18 +151,14 @@ import com.example.mealflow.viewModel.GetAllCommunitiesViewModel
 import com.example.mealflow.viewModel.GetUserCommunitiesViewModel
 import com.example.mealflow.viewModel.LoginViewModel
 import com.example.mealflow.viewModel.MealDetailsViewModel
-import com.example.mealflow.viewModel.MealDetailsViewModelFactory
 import com.example.mealflow.viewModel.MealPlannerViewModel
-import com.example.mealflow.viewModel.MealPlannerViewModelFactory
 import com.example.mealflow.viewModel.MealSearchViewModel
 import com.example.mealflow.viewModel.MealViewModel
-import com.example.mealflow.viewModel.MealViewModelFactory
 import com.example.mealflow.viewModel.MyCommunitiesViewModel
 import com.example.mealflow.viewModel.PostDropdownViewModel
 import com.example.mealflow.viewModel.PostsViewModel
 import com.example.mealflow.viewModel.RegisterViewModel
 import com.example.mealflow.viewModel.ShoppingListViewModel
-import com.example.mealflow.viewModel.ShoppingListViewModelFactory
 import com.example.mealflow.viewModel.SingleCommunityViewModel
 import com.example.mealflow.viewModel.UpdatePostViewModel
 import com.example.mealflow.viewModel.UserPostViewModel
@@ -188,14 +178,13 @@ data class BottomNavigationItem(
     val nonSelectedIcon: ImageVector,
     val hasNews: Boolean,
     val badgeCount: Int? = null,
-    val route: String
+    val route: Destination
 )
 
 class MainActivity : ComponentActivity() {
     private var isFirstLaunch = true
     private lateinit var userPreferencesManager: UserPreferencesManager
 
-    // Add permission launcher for notifications
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -208,7 +197,6 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Handle the splash screen transition.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val splashScreen = installSplashScreen()
             var keepSplashScreen = true
@@ -226,24 +214,18 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        // Request notification permission for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
                 ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                    // Permission already granted
                     Log.d("MainActivity", "Notification permission already granted")
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
-                    // Explain why we need the permission
-                    Log.d("MainActivity", "Should explain notification permission")
-                    // Show explanation dialog if needed
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
                 else -> {
-                    // Request the permission
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
@@ -265,30 +247,23 @@ class MainActivity : ComponentActivity() {
                 MealFlowTheme(darkTheme = useDarkTheme) {
                     val navController = rememberNavController()
 
-                    // Handle deep links from password reset
                     LaunchedEffect(intent?.data) {
                         intent?.data?.getQueryParameter("token")?.let { token ->
                             Log.d("MainActivity", "🔹 Token received: $token")
-                            navController.navigate("Reset Password Page?token=$token")
+                            navController.navigate(Destination.ResetPassword(token))
                         }
                     }
 
-                    // Handle navigation from shopping trip notifications
                     LaunchedEffect(intent) {
-                        val localContext = this@MainActivity // Use activity context directly
+                        val localContext = this@MainActivity
                         val navigateTo = intent?.getStringExtra("NAVIGATE_TO")
                         val shoppingDayIndex = intent?.getIntExtra("SHOPPING_DAY_INDEX", -1) ?: -1
 
-                        if (navigateTo == NavRoutes.ShoppingListPage.route && shoppingDayIndex >= 0) {
-                            Log.d("MainActivity", "Navigating to shopping list from notification, day index: $shoppingDayIndex")
-
-                            // Clear any existing notifications for this shopping day
+                        if (navigateTo == "Shopping List Page" && shoppingDayIndex >= 0) {
                             val notificationManager = localContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                            notificationManager.cancel(2000 + shoppingDayIndex) // Using same ID calculation as in receiver
+                            notificationManager.cancel(2000 + shoppingDayIndex)
 
-                            // Navigate to shopping list with clear backstack
-                            navController.navigate(navigateTo) {
-                                // Clear backstack to avoid navigation issues
+                            navController.navigate(Destination.ShoppingList) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
@@ -338,14 +313,11 @@ class MainActivity : ComponentActivity() {
         val communitiesUserViewModel: GetUserCommunitiesViewModel = koinViewModel()
         val postsUserViewModel: UserPostViewModel = koinViewModel()
         val snackbarHostState = remember { SnackbarHostState() }
-        val meals by mealViewModel.meals.collectAsState()
-        val isLoading by mealViewModel.isLoading.collectAsState()
-        val errorMessage by mealViewModel.errorMessage.collectAsState()
         val navigationItems = getNavigationItems()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        val shouldShowBottomBar = shouldShowBottomBar(currentRoute, navBackStackEntry)
-        val communityid = userPreferencesManager.getCommunityId()
+        val shouldShowBottomBar = shouldShowBottomBar(navBackStackEntry)
+        val shouldShowTopBar = shouldShowTopBar(navBackStackEntry)
+        val communityIdState by userPreferencesManager.getCommunityId().collectAsState(initial = null)
 
         val postsViewModel: PostsViewModel = koinViewModel()
         val myCommunitiesProfileViewModel: MyCommunitiesViewModel = koinViewModel()
@@ -354,48 +326,51 @@ class MainActivity : ComponentActivity() {
         val updatePostViewModel: UpdatePostViewModel = koinViewModel()
         val feedViewModel: FeedViewModel = koinViewModel()
 
-
         val context = LocalContext.current
         val commentApiService = remember { CommentApiService(context) }
-
         val shoppingListViewModel: ShoppingListViewModel = koinViewModel()
         val mealPlannerViewModel: MealPlannerViewModel = koinViewModel()
-
         val tokenManager = TokenManager(context)
 
-        // Use remember so startDestination is calculated only once
-        val startDestination = remember {
+        val startDestination: Any = remember {
             val accessToken = tokenManager.getAccessToken()
             val refreshToken = tokenManager.getRefreshToken()
-
-            Log.d("startDestination", "Calculating startDestination - accessToken: ${accessToken != null}, refreshToken: ${refreshToken != null}")
-
             when {
-                accessToken.isNullOrEmpty() && refreshToken.isNullOrEmpty() -> "Start Page"
-                accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isFirstLaunch -> "QuickLogin Page"
-                else -> "Home Page"
+                accessToken.isNullOrEmpty() && refreshToken.isNullOrEmpty() -> Destination.Start
+                accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty() && isFirstLaunch -> Destination.QuickLogin
+                else -> Destination.Home
             }
         }
 
         LaunchedEffect(startDestination) {
-            Log.d("startDestination", "LaunchedEffect triggered with destination: $startDestination")
-            isFirstLaunch = (startDestination == "QuickLogin Page")
-            if (startDestination == "QuickLogin Page") {
-                isFirstLaunch = true
-            } else {
-                isFirstLaunch = false
-            }
+            isFirstLaunch = (startDestination is Destination.QuickLogin)
         }
 
-        val currentIndex = navigationItems.indexOfFirst {
-            currentRoute == it.route || (it.route == "Home Page" && currentRoute?.startsWith("meal_detail") == true)
+        val currentIndex = navigationItems.indexOfFirst { item ->
+            val destination = navBackStackEntry?.destination
+            when (item.route) {
+                is Destination.Home -> destination?.hasRoute<Destination.Home>() == true || destination?.hasRoute<Destination.MealDetail>() == true
+                is Destination.Search -> destination?.hasRoute<Destination.Search>() == true
+                is Destination.ShoppingList -> destination?.hasRoute<Destination.ShoppingList>() == true
+                is Destination.CommunityHome -> destination?.hasRoute<Destination.CommunityHome>() == true
+                is Destination.Planner -> destination?.hasRoute<Destination.Planner>() == true
+                else -> false
+            }
         }.let { index -> if (index < 0) 0 else index }
 
         var selectedItemIndex by rememberSaveable { mutableStateOf(currentIndex) }
 
-        LaunchedEffect(currentRoute) {
-            val index = navigationItems.indexOfFirst {
-                currentRoute == it.route || (it.route == "Home Page" && currentRoute?.startsWith("meal_detail") == true)
+        LaunchedEffect(navBackStackEntry) {
+            val index = navigationItems.indexOfFirst { item ->
+                val destination = navBackStackEntry?.destination
+                when (item.route) {
+                    is Destination.Home -> destination?.hasRoute<Destination.Home>() == true || destination?.hasRoute<Destination.MealDetail>() == true
+                    is Destination.Search -> destination?.hasRoute<Destination.Search>() == true
+                    is Destination.ShoppingList -> destination?.hasRoute<Destination.ShoppingList>() == true
+                    is Destination.CommunityHome -> destination?.hasRoute<Destination.CommunityHome>() == true
+                    is Destination.Planner -> destination?.hasRoute<Destination.Planner>() == true
+                    else -> false
+                }
             }
             selectedItemIndex = if (index >= 0) index else selectedItemIndex
         }
@@ -403,7 +378,7 @@ class MainActivity : ComponentActivity() {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surface,
             topBar = {
-                if (shouldShowTopBar(currentRoute)) {
+                if (shouldShowTopBar) {
                     ModernTopBar(navController = navController)
                 }
             },
@@ -428,73 +403,50 @@ class MainActivity : ComponentActivity() {
                     .consumeWindowInsets(innerPadding)
                     .imePadding()
             ) {
-                composable(
-                    "Start Page",
+                composable<Destination.Start>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { StartPage(navController) }
 
-                composable(
-                    "Login Page",
+                composable<Destination.Login>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { LoginPage(navController) }
 
-                composable(
-                    "Register Page",
+                composable<Destination.Register>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { RegisterPage(navController, registerViewModel) }
 
-                composable(
-                    route = "Otp Page/{email}",
-                    arguments = listOf(navArgument("email") { type = NavType.StringType }),
+                composable<Destination.Otp>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { backStackEntry ->
-                    val email = backStackEntry.arguments?.getString("email")
-                    if (email != null) {
-                        OtpPage(
-                            navController = navController,
-                            registerViewModel = registerViewModel,
-                            email = email
-                        )
-                    } else {
-                        Log.e("Navigation", "Email was null in OtpPage route")
-                    }
+                    val otp: Destination.Otp = backStackEntry.toRoute()
+                    OtpPage(navController = navController, registerViewModel = registerViewModel, email = otp.email)
                 }
 
-                composable(
-                    "Forget Password Page",
+                composable<Destination.ForgetPassword>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { ForgetPasswordPage(navController) }
 
-                // إضافة هذا في الـ NavGraph الخاص بك
-
-                composable(
-                    route = "check_email/{email}",
-                    arguments = listOf(navArgument("email") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val email = backStackEntry.arguments?.getString("email") ?: ""
-                    CheckEmailPage(
-                        navController = navController,
-                        email = email
-                    )
+                composable<Destination.CheckEmail> { backStackEntry ->
+                    val checkEmail: Destination.CheckEmail = backStackEntry.toRoute()
+                    CheckEmailPage(navController = navController, email = checkEmail.email)
                 }
 
-                composable(
-                    "Profile Page",
+                composable<Destination.Profile>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
@@ -512,75 +464,46 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                composable(
-                    "Update Profile",
+                composable<Destination.UpdateProfile>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) {
-                    UpdateProfileScreen(
-                        navController = navController,
-                        snackbarHostState = snackbarHostState,
-                        context = context,
-                    )
-                }
+                ) { UpdateProfileScreen(navController = navController, snackbarHostState = snackbarHostState, context = context) }
 
-                composable(
-                    "Update Community",
+                composable<Destination.UpdateCommunity>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) {
-                    UpdateCommunityPage(
-                        navController = navController,
-                        snackbarHostState =  snackbarHostState,
-                        context = context,
-                        communityId = communityid.toString()
-                    )
-                }
+                ) { UpdateCommunityPage(navController = navController, snackbarHostState =  snackbarHostState, context = context, communityId = communityIdState) }
 
-                composable(
-                    "User Page",
+                composable<Destination.User>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) { UserPage(
-                    communitiesViewModel = communitiesUserViewModel,
-                    mealSearchViewModel = mealSearchViewModel,
-                    postsViewModel = postsUserViewModel,
-                    commentApiService = commentApiService,
-                    userPreferencesManager = userPreferencesManager,
-                    navController = navController
-                ) }
+                ) { UserPage(communitiesViewModel = communitiesUserViewModel, mealSearchViewModel = mealSearchViewModel, postsViewModel = postsUserViewModel, commentApiService = commentApiService, userPreferencesManager = userPreferencesManager, navController = navController) }
 
-                composable(
-                    "QuickLogin Page",
+                composable<Destination.QuickLogin>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { QuickLoginPage(context, navController) }
 
-                composable(
-                    route = "Reset Password Page?token={token}",
-                    arguments = listOf(navArgument("token") { nullable = true }),
-                    deepLinks = listOf(navDeepLink {
-                        uriPattern = "https://iiacbca.r.bh.d.sendibt3.com/tr/cl?token={token}"
-                    }),
+                composable<Destination.ResetPassword>(
+                    deepLinks = listOf(navDeepLink { uriPattern = "https://iiacbca.r.bh.d.sendibt3.com/tr/cl?token={token}" }),
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { backStackEntry ->
-                    val token = backStackEntry.arguments?.getString("token")
-                    ResetPasswordPage(navController, token)
+                    val reset: Destination.ResetPassword = backStackEntry.toRoute()
+                    ResetPasswordPage(navController, reset.token)
                 }
 
-                composable(
-                    "Community Home",
+                composable<Destination.CommunityHome>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
@@ -594,161 +517,108 @@ class MainActivity : ComponentActivity() {
                         commentApiService = commentApiService,
                         viewModelGetCommunities = myCommunitiesViewModel
                     )
-//                    CommunityHome(navController, myCommunitiesViewModel)
                 }
 
-                composable("search_results") {
-                    SearchResultsScreen(navController = navController)
-                }
+                composable<Destination.SearchResults> { SearchResultsScreen(navController = navController) }
 
-                composable("remove_members") {
-                    RemoveMembersPage(navController = navController)
-                }
+                composable<Destination.RemoveMembers> { RemoveMembersPage(navController = navController) }
 
-                composable(
-                    "Community Page",
+                composable<Destination.CommunityPage>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) { CommunityPage(
-                    singleCommunityViewModel,
-                    commentApiService = commentApiService,
-                    userPreferencesManager = userPreferencesManager,
-                    navController = navController
-                ) }
+                ) { CommunityPage(singleCommunityViewModel, commentApiService = commentApiService, userPreferencesManager = userPreferencesManager, navController = navController) }
 
-                composable(
-                    "MyCommunities Page",
+                composable<Destination.MyCommunities>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { MyCommunitiesScreen(navController = navController) }
 
-                composable(
-                    "AllCommunities Page",
+                composable<Destination.AllCommunities>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { AllCommunitiesScreen(navController = navController) }
 
-                composable(
-                    route = "post_details/{postId}",
-                    arguments = listOf(navArgument("postId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val postId = backStackEntry.arguments?.getString("postId") ?: return@composable
+                composable<Destination.PostDetails> { backStackEntry ->
+                    val details: Destination.PostDetails = backStackEntry.toRoute()
                     val commentApiService = remember { CommentApiService(context) }
-
-                    PostDetailsScreen(
-                        postId = postId,
-                        navController = navController,
-                        commentApiService = commentApiService
-                    )
+                    PostDetailsScreen(postId = details.postId, navController = navController, commentApiService = commentApiService)
                 }
 
-                composable(
-                    "FirstStep Page",
+                composable<Destination.FirstStep>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { FirstStep(navController, createCommunityViewModel) }
 
-                composable(
-                    "SecondStep Page",
+                composable<Destination.SecondStep>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { SecondStep(navController, createCommunityViewModel) }
 
-                composable(
-                    "ThirdStep Page",
+                composable<Destination.ThirdStep>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { ThirdStep(navController, createCommunityViewModel) }
 
-//                composable(
-//                    "FourthStep Page",
-//                    enterTransition = { NavigationAnimations.enterTransition(this) },
-//                    exitTransition = { NavigationAnimations.exitTransition(this) },
-//                    popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-//                    popExitTransition = { NavigationAnimations.popExitTransition(this) }
-//                ) { FourthStep(navController, createCommunityViewModel) }
-
-                composable(
-                    "Members Page",
+                composable<Destination.Members>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) { MembersPage(
-                    viewModel = communityMembers,
-                    navController
-                ) }
+                ) { MembersPage(viewModel = communityMembers, navController) }
 
-                composable(
-                    "Following Page",
+                composable<Destination.Following>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { FollowingPage(navController) }
 
-                composable(
-                    "UserFollowing Page",
+                composable<Destination.UserFollowing>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { UserFollowingPage(navController) }
 
-                composable(
-                    "Followers Page",
+                composable<Destination.Followers>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { FollowersPage(navController) }
 
-                composable(
-                    "UserFollowers Page",
+                composable<Destination.UserFollowers>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { UserFollowersPage(navController) }
 
-                composable(
-                    "SetAdmin Page",
+                composable<Destination.SetAdmin>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { SetAdminPage(context,navController) }
 
-                composable("setup_welcome") {
-                    SetupWelcomeScreen(navController)
-                }
+                composable<Destination.SetupWelcome> { SetupWelcomeScreen(navController) }
+                composable<Destination.SetupBasicInfo> { SetupBasicInfoScreen(navController, setupViewModel) }
+                composable<Destination.SetupPhysicalInfo> { SetupPhysicalInfoScreen(navController, setupViewModel) }
+                composable<Destination.SetupPhotos> { SetupPhotosScreen(navController, snackbarHostState, context, setupViewModel) }
 
-                composable("setup_basic_info") {
-                    SetupBasicInfoScreen(navController, setupViewModel)
-                }
-
-                composable("setup_physical_info") {
-                    SetupPhysicalInfoScreen(navController, setupViewModel)
-                }
-
-                composable("setup_photos") {
-                    SetupPhotosScreen(navController, snackbarHostState, context, setupViewModel)
-                }
-
-                composable(
-                    "Questions Page",
+                composable<Destination.Questions>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
@@ -759,130 +629,97 @@ class MainActivity : ComponentActivity() {
                         Question(id = 2, question = "Which meal do you enjoy the most?", options = listOf("Breakfast", "Lunch", "Dinner", "Snacks")),
                         Question(id = 3, question = "What is your favorite dessert?", options = listOf("Ice Cream", "Cake", "Cookies", "Fruit Salad"))
                     )
-                    MultiQuestionScreen(
-                        questions = sampleQuestions,
-                        onComplete = { answers ->
-                            println("Questions completed:")
-                            answers.forEach { answer -> println("Question ${answer.questionId}: ${answer.selectedOption}") }
-                            navController.navigate("Home Page")
-                        },
-                        onBack = { println("Going back") }
-                    )
+                    MultiQuestionScreen(questions = sampleQuestions, onComplete = { answers -> navController.navigate(Destination.Home) }, onBack = { navController.popBackStack() })
                 }
 
-                composable(
-                    "HealthData Page",
+                composable<Destination.HealthData>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) {
-                    HealthDataScreen(
-                        { navController.navigate("Community Page") },
-                        { navController.navigate("Community Page") }
-                    )
-                }
+                ) { HealthDataScreen({ navController.navigate(Destination.CommunityHome) }, { navController.navigate(Destination.CommunityHome) }) }
 
-                composable(
-                    route = "PostCreationPage?communityId={communityId}",
-                    arguments = listOf(navArgument("communityId") { type = NavType.StringType; nullable = true; defaultValue = null }),
+                composable<Destination.PostCreation>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { backStackEntry ->
-                    val communityId = backStackEntry.arguments?.getString("communityId")
-                    PostCreationPage(navController = navController, snackbarHostState = snackbarHostState, context = context, communityId = communityId)
+                    val creation: Destination.PostCreation = backStackEntry.toRoute()
+                    PostCreationPage(navController = navController, snackbarHostState = snackbarHostState, context = context, communityId = creation.communityId)
                 }
 
-                composable(
-                    route = "RecipeCreationPage?communityId={communityId}",
-                    arguments = listOf(navArgument("communityId") { type = NavType.StringType; nullable = true; defaultValue = null }),
+                composable<Destination.RecipeCreation>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { backStackEntry ->
-                    val communityId = backStackEntry.arguments?.getString("communityId")
-                    RecipeCreationPage(navController = navController, context = context, communityId = communityId)
+                    val creation: Destination.RecipeCreation = backStackEntry.toRoute()
+                    RecipeCreationPage(navController = navController, context = context, communityId = creation.communityId)
                 }
 
-                composable(HomePage.route) {
+                composable<Destination.Home> {
                     var username by remember { mutableStateOf("Loading...") }
                     LaunchedEffect(key1 = Unit) {
                         userPreferencesManager.getUsername().collect { name -> username = if (name == "Unknown") "Sweetie" else name }
                     }
-                    HomePage(
-                        userName = username,
-                        onMealClick = { meal -> navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(meal.mealId.toString())) },
-                        onPlannedMealClick = { mealIdString -> navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(mealIdString)) },
-                        mealViewModel = mealViewModel,
-                        mealPlannerViewModel = mealPlannerViewModel,
-                        navController = navController
-                    )
+                    HomePage(userName = username, onMealClick = { meal -> navController.navigate(Destination.MealDetail(meal.mealId)) }, onPlannedMealClick = { mealIdString -> navController.navigate(Destination.MealDetail(mealIdString)) }, mealViewModel = mealViewModel, mealPlannerViewModel = mealPlannerViewModel, navController = navController)
                 }
-                composable(
-                    route = "${NavRoutes.SearchPage.route}?returnToPlanner={returnToPlanner}&date={date}&mealType={mealType}&sourceScreen={sourceScreen}",
-                    arguments = listOf(
-                        navArgument("returnToPlanner") { type = NavType.BoolType; defaultValue = false },
-                        navArgument("date") { type = NavType.StringType; nullable = true },
-                        navArgument("mealType") { type = NavType.StringType; nullable = true },
-                        navArgument("sourceScreen") { type = NavType.StringType; nullable = true }
-                    )
-                ) { backStackEntry ->
-                    val returnToPlanner = backStackEntry.arguments?.getBoolean("returnToPlanner") ?: false
-                    val dateForPlanner = backStackEntry.arguments?.getString("date")
-                    val mealTypeForPlannerString = backStackEntry.arguments?.getString("mealType")
-                    val mealTypeForPlanner = mealTypeForPlannerString?.let { runCatching { MealType.valueOf(it) }.getOrNull() }
-                    val sourceScreen = backStackEntry.arguments?.getString("sourceScreen")
+
+                composable<Destination.Search> { backStackEntry ->
+                    val search: Destination.Search = backStackEntry.toRoute()
                     SearchPage(
                         onMealClick = { meal ->
-                            if (returnToPlanner && dateForPlanner != null && mealTypeForPlanner != null) {
+                            if (search.returnToPlanner && search.date != null && search.mealType != null) {
                                 navController.previousBackStackEntry?.savedStateHandle?.set("selectedMealId", meal.mealId)
-                                navController.previousBackStackEntry?.savedStateHandle?.set("targetDate", dateForPlanner)
-                                navController.previousBackStackEntry?.savedStateHandle?.set("targetMealType", mealTypeForPlanner.name)
-                                navController.previousBackStackEntry?.savedStateHandle?.set("sourceScreenResult", sourceScreen)
+                                navController.previousBackStackEntry?.savedStateHandle?.set("targetDate", search.date)
+                                navController.previousBackStackEntry?.savedStateHandle?.set("targetMealType", search.mealType)
+                                navController.previousBackStackEntry?.savedStateHandle?.set("sourceScreenResult", search.sourceScreen)
                                 navController.popBackStack()
                             } else {
-                                navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(meal.mealId))
+                                navController.navigate(Destination.MealDetail(meal.mealId))
                             }
                         },
                         mealViewModel = mealViewModel,
                         navController = navController,
-                        returnToPlanner = returnToPlanner
+                        returnToPlanner = search.returnToPlanner
                     )
                 }
-                composable(NavRoutes.PlannerPage.route) { backStackEntry ->
+
+                composable<Destination.Planner> { backStackEntry ->
                     ObservePlannerResult(backStackEntry, mealViewModel, mealPlannerViewModel, "PlannerPage")
                     PlannerPage(
                         viewModel = mealPlannerViewModel,
                         mealViewModel = mealViewModel,
                         navController = navController,
-                        onNavigateToMealDetails = { mealId -> navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(mealId)) },
+                        onNavigateToMealDetails = { mealId -> navController.navigate(Destination.MealDetail(mealId)) },
                         onPlanMealsClick = {
                             val currentDateInPlanner = mealPlannerViewModel.currentDate.value
-                            val targetMealType = MealType.BREAKFAST // Default or determined by UI
-                            navController.navigate("${NavRoutes.SearchPage.route}?returnToPlanner=true&date=${DateUtils.formatToISO(currentDateInPlanner)}&mealType=${targetMealType.name}&sourceScreen=PlannerPage")
+                            val targetMealType = MealType.BREAKFAST
+                            navController.navigate(Destination.Search(returnToPlanner = true, date = DateUtils.formatToISO(currentDateInPlanner), mealType = targetMealType.name, sourceScreen = "PlannerPage"))
                         },
-                        onSeeAllPlansClick = { navController.navigate(NavRoutes.AllPlansCalendarViewScreen.route) }
+                        onSeeAllPlansClick = { navController.navigate(Destination.AllPlansCalendarView) }
                     )
                 }
-                composable(NavRoutes.AllPlansCalendarViewScreen.route) { backStackEntry ->
+
+                composable<Destination.AllPlansCalendarView> { backStackEntry ->
                     ObservePlannerResult(backStackEntry, mealViewModel, mealPlannerViewModel, "AllPlansScreen")
                     AllPlansScreen(
                         viewModel = mealPlannerViewModel,
                         navController = navController,
                         onNavigateBack = { navController.popBackStack() },
                         onAddMealToDate = { date, mealType ->
-                            navController.navigate("${NavRoutes.SearchPage.route}?returnToPlanner=true&date=$date&mealType=${mealType.name}&sourceScreen=AllPlansScreen")
+                            navController.navigate(Destination.Search(returnToPlanner = true, date = date, mealType = mealType.name, sourceScreen = "AllPlansScreen"))
                         }
                     )
                 }
-                composable(NavRoutes.DaysSelectionScreen.route) {
+
+                composable<Destination.DaysSelection> {
                     DaysSelectionScreen(
                         onDaysSelected = { daysCount ->
                             mealPlannerViewModel.clearNewPlan()
-                            navController.navigate(PlanConfigScreen.createRoute(daysCount))
+                            navController.navigate(Destination.PlanConfig(daysCount))
                         },
                         onNavigateBack = {
                             mealPlannerViewModel.finalizeAndClearNewPlanBuilder()
@@ -891,14 +728,12 @@ class MainActivity : ComponentActivity() {
                         startDate = mealPlannerViewModel.currentDate.value
                     )
                 }
-                composable(
-                    route = PlanConfigScreen.route,
-                    arguments = listOf(navArgument("daysCount") { type = NavType.IntType })
-                ) { backStackEntry ->
+
+                composable<Destination.PlanConfig> { backStackEntry ->
+                    val config: Destination.PlanConfig = backStackEntry.toRoute()
                     ObservePlannerResult(backStackEntry, mealViewModel, mealPlannerViewModel, "PlanConfigScreen")
-                    val daysCount = backStackEntry.arguments?.getInt("daysCount") ?: 1
                     PlanConfigScreen(
-                        daysCount = daysCount,
+                        daysCount = config.daysCount,
                         viewModel = mealPlannerViewModel,
                         onNavigateBack = {
                             mealPlannerViewModel.finalizeAndClearNewPlanBuilder()
@@ -908,43 +743,29 @@ class MainActivity : ComponentActivity() {
                             val planStartDate = mealPlannerViewModel.newPlanMeals.value.minOfOrNull { it.date }
                             val planEndDate = mealPlannerViewModel.newPlanMeals.value.maxOfOrNull { it.date }
                             if (planStartDate != null && planEndDate != null) {
-                                navController.navigate("${NavRoutes.ShoppingFrequencyScreen.route}?planStartDate=$planStartDate&planEndDate=$planEndDate")
+                                navController.navigate(Destination.ShoppingFrequency(planStartDate, planEndDate))
                             } else {
                                 Log.e("AppNavHost", "PlanConfig: Start or End date is null.")
-                                navController.popBackStack(NavRoutes.PlannerPage.route, inclusive = false)
+                                navController.popBackStack()
                             }
                         },
                         onAddMealToDay = { date, mealType ->
-                            navController.navigate("${NavRoutes.SearchPage.route}?returnToPlanner=true&date=$date&mealType=${mealType.name}&sourceScreen=PlanConfigScreen")
+                            navController.navigate(Destination.Search(returnToPlanner = true, date = date, mealType = mealType.name, sourceScreen = "PlanConfigScreen"))
                         }
                     )
                 }
-                composable(
-                    route = "${NavRoutes.ShoppingFrequencyScreen.route}?planStartDate={planStartDate}&planEndDate={planEndDate}",
-                    arguments = listOf(
-                        navArgument("planStartDate") { type = NavType.StringType },
-                        navArgument("planEndDate") { type = NavType.StringType }
-                    )
-                ) { backStackEntry ->
-                    val planStartDateStr = backStackEntry.arguments?.getString("planStartDate")
-                    val planEndDateStr = backStackEntry.arguments?.getString("planEndDate")
-                    if (planStartDateStr == null || planEndDateStr == null) {
-                        Log.e("AppNavHost", "ShoppingFrequencyScreen: Missing date arguments.")
-                        navController.popBackStack()
-                        return@composable
-                    }
-                    val planStartDate = DateUtils.parseLocalDate(planStartDateStr) ?: LocalDate.now()
-                    val planEndDate = DateUtils.parseLocalDate(planEndDateStr) ?: LocalDate.now().plusDays(6)
+
+                composable<Destination.ShoppingFrequency> { backStackEntry ->
+                    val freq: Destination.ShoppingFrequency = backStackEntry.toRoute()
+                    val planStartDate = DateUtils.parseLocalDate(freq.planStartDate) ?: LocalDate.now()
+                    val planEndDate = DateUtils.parseLocalDate(freq.planEndDate) ?: LocalDate.now().plusDays(6)
                     ShoppingFrequencyScreen(
                         onFrequencySelected = { frequency ->
-                            // Pass the selected days directly to the ShoppingListViewModel
                             val shoppingDays = backStackEntry.savedStateHandle.get<List<LocalDate>>("selectedShoppingDays")
                                 ?: calculateShoppingDays(planStartDate, ChronoUnit.DAYS.between(planStartDate, planEndDate).toInt() + 1, frequency)
-
-                            // Generate shopping list with improved consolidation
                             shoppingListViewModel.createNewShoppingList(planStartDate, planEndDate, frequency, shoppingDays)
                             mealPlannerViewModel.finalizeAndClearNewPlanBuilder()
-                            navController.navigate(NavRoutes.ShoppingListPage.route) { popUpTo(NavRoutes.PlannerPage.route) { inclusive = false } }
+                            navController.navigate(Destination.ShoppingList) { popUpTo(Destination.Planner) { inclusive = false } }
                         },
                         onNavigateBack = { navController.popBackStack() },
                         planStartDate = planStartDate,
@@ -952,15 +773,17 @@ class MainActivity : ComponentActivity() {
                         navController = navController
                     )
                 }
-                composable(NavRoutes.ShoppingListPage.route) {
+
+                composable<Destination.ShoppingList> {
                     ShoppingListScreen(
-                        onNavigateToAddCustomItem = { navController.navigate(NavRoutes.AddCustomItemScreen.route) },
+                        onNavigateToAddCustomItem = { navController.navigate(Destination.AddCustomItem) },
                         viewModel = shoppingListViewModel,
                         onNavigateBack = { navController.popBackStack() },
                         navController = navController
                     )
                 }
-                composable(NavRoutes.AddCustomItemScreen.route) {
+
+                composable<Destination.AddCustomItem> {
                     AddCustomItemScreen(
                         viewModel = shoppingListViewModel,
                         onAddClickAndNavigateBack = { navController.popBackStack() },
@@ -970,34 +793,20 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
-                composable(
-                    route = "meal_detail/{mealId}",
-                    arguments = listOf(navArgument("mealId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val mealId = backStackEntry.arguments?.getString("mealId") ?: ""
-                    // Try to get the meal from the ViewModel's cache first
+
+                composable<Destination.MealDetail> { backStackEntry ->
+                    val detail: Destination.MealDetail = backStackEntry.toRoute()
+                    val mealId = detail.mealId
                     val cachedMeal = mealViewModel.findMealById(mealId)
-                    val mealDetailsViewModel: MealDetailsViewModel = koinViewModel(
-                        parameters = { parametersOf(mealId, cachedMeal) }
-                    )
+                    val mealDetailsViewModel: MealDetailsViewModel = koinViewModel(parameters = { parametersOf(mealId, cachedMeal) })
                     val mealDetailsState by mealDetailsViewModel.mealDetails.collectAsState()
                     val isPlanned = mealPlannerViewModel.allPlannedMealsData.value.plannedMeals.any { it.meal.mealId == mealId }
 
                     when (val resource = mealDetailsState) {
-                        is Resource.Loading -> {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        }
+                        is Resource.Loading -> { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
                         is Resource.Success -> {
                             resource.data?.let { meal ->
-                                MealDetailScreen(
-                                    meal = meal,
-                                    onNavigateBack = { navController.popBackStack() },
-                                    navController = navController,
-                                    mealViewModel = mealViewModel,
-                                    isPlanned = isPlanned
-                                )
+                                MealDetailScreen(meal = meal, onNavigateBack = { navController.popBackStack() }, navController = navController, mealViewModel = mealViewModel, isPlanned = isPlanned)
                             }
                         }
                         is Resource.Error -> {
@@ -1007,80 +816,45 @@ class MainActivity : ComponentActivity() {
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(resource.message ?: "Unknown error", style = MaterialTheme.typography.bodyMedium)
                                     Spacer(modifier = Modifier.height(16.dp))
-                                    TextButton(onClick = { navController.popBackStack() }) {
-                                        Text("Go Back")
-                                    }
+                                    TextButton(onClick = { navController.popBackStack() }) { Text("Go Back") }
                                 }
                             }
                         }
                     }
                 }
-                composable(
-                    route = "all_meals/{title}",
-                    arguments = listOf(navArgument("title") { type = NavType.StringType }),
+
+                composable<Destination.AllMeals> { backStackEntry ->
+                    val all: Destination.AllMeals = backStackEntry.toRoute()
+                    val title = all.title
+                    AllMealsPage(title = title, onMealClick = { meal -> navController.navigate(Destination.MealDetail(meal.mealId)) }, onBackClick = { navController.popBackStack() })
+                }
+
+                composable<Destination.Settings> { SettingsPage(navController = navController) }
+                composable<Destination.PrivacyPolicy> { PrivacyPolicyPage(navController) }
+                composable<Destination.TermsOfService> { TermsOfServicePage(navController) }
+                composable<Destination.HelpCenter> { HelpCenterPage(navController) }
+                composable<Destination.ReportBug> { ReportBugPage(navController) }
+
+                composable<Destination.CookingMode>(
                     enterTransition = { NavigationAnimations.enterTransition(this) },
                     exitTransition = { NavigationAnimations.exitTransition(this) },
                     popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
                     popExitTransition = { NavigationAnimations.popExitTransition(this) }
                 ) { backStackEntry ->
-                    val title = backStackEntry.arguments?.getString("title") ?: "Meals"
-                    AllMealsPage(
-                        title = title,
-                        onMealClick = { meal -> navController.navigate(NavRoutes.MealDetailPage.createMealDetailRoute(meal.mealId.toString())) },
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
-
-                composable(NavRoutes.SettingsPage.route) {
-                    SettingsPage(navController = navController)
-                }
-
-                composable("privacy_policy") { PrivacyPolicyPage(navController) }
-                composable("terms_of_service") { TermsOfServicePage(navController) }
-                composable("help_center") { HelpCenterPage(navController) }
-                composable("report_bug") { ReportBugPage(navController) }
-
-                composable(
-                    route = "cooking_mode/{mealJson}",
-                    arguments = listOf(navArgument("mealJson") { type = NavType.StringType }),
-                    enterTransition = { NavigationAnimations.enterTransition(this) },
-                    exitTransition = { NavigationAnimations.exitTransition(this) },
-                    popEnterTransition = { NavigationAnimations.popEnterTransition(this) },
-                    popExitTransition = { NavigationAnimations.popExitTransition(this) }
-                ) { backStackEntry ->
-                    val mealJson = backStackEntry.arguments?.getString("mealJson")
-                    val hapticUtil = rememberHapticFeedback() // Get haptic utility here
-
-                    if (mealJson != null) {
-                        val meal = try {
-                            val decodedMealJson = URLDecoder.decode(mealJson, StandardCharsets.UTF_8.toString())
-                            Gson().fromJson(decodedMealJson, Meal::class.java)
-                        } catch (e: Exception) {
-                            Log.e("AppNavHost", "Error deserializing/decoding meal for CookingModeScreen", e)
-                            null
-                        }
-
-                        if (meal != null) {
-                            CookingModeScreen(
-                                meal = meal,
-                                onNavigateBack = { navController.popBackStack() },
-                                haptic = hapticUtil
-                            )
-                        } else {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text("Error loading cooking mode. Please try again.", style = MaterialTheme.typography.bodyLarge)
-                            }
-                            LaunchedEffect(Unit) {
-                                kotlinx.coroutines.delay(3000) // Show error for 3 seconds
-                                navController.popBackStack()
-                            }
-                        }
+                    val cooking: Destination.CookingMode = backStackEntry.toRoute()
+                    val hapticUtil = rememberHapticFeedback()
+                    val meal = try {
+                        val decodedMealJson = URLDecoder.decode(cooking.mealJson, StandardCharsets.UTF_8.toString())
+                        Gson().fromJson(decodedMealJson, Meal::class.java)
+                    } catch (e: Exception) {
+                        Log.e("AppNavHost", "Error deserializing/decoding meal for CookingModeScreen", e)
+                        null
+                    }
+                    if (meal != null) {
+                        CookingModeScreen(meal = meal, onNavigateBack = { navController.popBackStack() }, haptic = hapticUtil)
                     } else {
-                        Log.e("AppNavHost", "mealJson is null for CookingModeScreen route")
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("Error: Meal data not found.", style = MaterialTheme.typography.bodyLarge)
-                        }
-                        LaunchedEffect(Unit) { // Auto navigate back if data is missing
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Error loading cooking mode. Please try again.", style = MaterialTheme.typography.bodyLarge) }
+                        LaunchedEffect(Unit) {
                             kotlinx.coroutines.delay(3000)
                             navController.popBackStack()
                         }
@@ -1092,11 +866,11 @@ class MainActivity : ComponentActivity() {
 
     fun getNavigationItems(): List<BottomNavigationItem> {
         return listOf(
-            BottomNavigationItem(title = "Home", selectedIcon = Icons.Filled.Home, nonSelectedIcon = Icons.Outlined.Home, hasNews = false, route = HomePage.route),
-            BottomNavigationItem(title = "Shopping", selectedIcon = Icons.Filled.ShoppingCart, nonSelectedIcon = Icons.Outlined.ShoppingCart, hasNews = false, route = NavRoutes.ShoppingListPage.route),
-            BottomNavigationItem(title = "Search", selectedIcon = Icons.Filled.Search, nonSelectedIcon = Icons.Outlined.Search, hasNews = false, route = NavRoutes.SearchPage.route),
-            BottomNavigationItem(title = "Community", selectedIcon = Icons.Filled.People, nonSelectedIcon = Icons.Outlined.PeopleOutline, hasNews = false, route = NavRoutes.CommunityHome.route),
-            BottomNavigationItem(title = "Planner", selectedIcon = Icons.Filled.CalendarToday, nonSelectedIcon = Icons.Outlined.CalendarToday, hasNews = false, route = NavRoutes.PlannerPage.route)
+            BottomNavigationItem(title = "Home", selectedIcon = Icons.Filled.Home, nonSelectedIcon = Icons.Outlined.Home, hasNews = false, route = Destination.Home),
+            BottomNavigationItem(title = "Shopping", selectedIcon = Icons.Filled.ShoppingCart, nonSelectedIcon = Icons.Outlined.ShoppingCart, hasNews = false, route = Destination.ShoppingList),
+            BottomNavigationItem(title = "Search", selectedIcon = Icons.Filled.Search, nonSelectedIcon = Icons.Outlined.Search, hasNews = false, route = Destination.Search()),
+            BottomNavigationItem(title = "Community", selectedIcon = Icons.Filled.People, nonSelectedIcon = Icons.Outlined.PeopleOutline, hasNews = false, route = Destination.CommunityHome),
+            BottomNavigationItem(title = "Planner", selectedIcon = Icons.Filled.CalendarToday, nonSelectedIcon = Icons.Outlined.CalendarToday, hasNews = false, route = Destination.Planner)
         )
     }
 }
@@ -1119,11 +893,8 @@ private fun ObservePlannerResult(
             selectedMealId != null && targetDate != null && targetMealTypeName != null) {
             Log.d("ObservePlannerResult", "Result for $currentScreenIdentifier: MealId=$selectedMealId, Date=$targetDate, Type=$targetMealTypeName")
             val mealTypeForResult = runCatching { MealType.valueOf(targetMealTypeName!!) }.getOrNull()
-
-            // Show loading indicator or toast to let user know the meal is being added
             val dateForMeal = DateUtils.parseLocalDate(targetDate!!)
 
-            // Use the optimized fetchMealById function
             mealViewModel.fetchMealById(selectedMealId) { fetchedMeal ->
                 if (fetchedMeal != null) {
                     processMealForPlanner(fetchedMeal, mealTypeForResult, targetDate!!, dateForMeal, currentScreenIdentifier, backStackEntry, mealPlannerViewModel)
@@ -1131,8 +902,6 @@ private fun ObservePlannerResult(
                     Log.e("ObservePlannerResult", "Failed to fetch meal with ID: $selectedMealId")
                 }
             }
-
-            // Clear the state handle is done after processing
         }
     }
 }
@@ -1167,21 +936,21 @@ private fun processMealForPlanner(
         Log.e("ObservePlannerResult", "MealType or date was null. MealType: $mealType, Date: $dateForMeal")
     }
 
-            backStackEntry.savedStateHandle.remove<String?>("selectedMealId")
-            backStackEntry.savedStateHandle.remove<String?>("targetDate")
-            backStackEntry.savedStateHandle.remove<String?>("targetMealType")
-            backStackEntry.savedStateHandle.remove<String?>("sourceScreenResult")
-        }
+    backStackEntry.savedStateHandle.remove<String?>("selectedMealId")
+    backStackEntry.savedStateHandle.remove<String?>("targetDate")
+    backStackEntry.savedStateHandle.remove<String?>("targetMealType")
+    backStackEntry.savedStateHandle.remove<String?>("sourceScreenResult")
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 private fun calculateShoppingDays(planStartDate: LocalDate, planDurationDays: Int, frequency: Int): List<LocalDate> {
     return when (frequency) {
-        0 -> listOf(planStartDate) // Once at start
-        1 -> { // Weekly
+        0 -> listOf(planStartDate)
+        1 -> {
             val weeks = (planDurationDays / 7) + 1
             (0 until min(weeks, 3)).map { planStartDate.plusDays(it * 7L) }
         }
-        2 -> { // Bi-weekly
+        2 -> {
             val biWeeks = (planDurationDays / 14) + 1
             (0 until min(biWeeks, 2)).map { planStartDate.plusDays(it * 14L) }
         }
