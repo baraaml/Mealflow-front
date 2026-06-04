@@ -38,13 +38,23 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.toRoute
-import com.example.mealflow.BottomNavigationItem
+import com.example.mealflow.navigation.Destination
+
+data class BottomNavigationItem(
+    val title: String,
+    val selectedIcon: ImageVector,
+    val nonSelectedIcon: ImageVector,
+    val hasNews: Boolean,
+    val badgeCount: Int? = null,
+    val route: Destination
+)
 
 @Composable
 fun BottomNavigationBar(
